@@ -9,7 +9,9 @@ class UserStories(BaseModel):
     description: str = Field(...,description="The description of the user story")
     priority: int = Field(...,description="The priority of the user story")
     acceptance_criteria: str = Field(...,description="The acceptance criteria of the user story")
-    
+
+class UserStoryList(BaseModel):
+    user_stories: list[UserStories]
     
 class SDLCState(TypedDict):
     """
@@ -18,7 +20,7 @@ class SDLCState(TypedDict):
     """    
     project_name: str
     requirements: list[str]
-    user_stories: list[UserStories]
+    user_stories: UserStoryList
     
     
 

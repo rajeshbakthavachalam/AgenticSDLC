@@ -78,7 +78,8 @@ class LoadStreamlitUI:
                 self.user_controls["selected_groq_model"] = st.selectbox("Select Model", model_options)
                 # API key input
                 os.environ["GROQ_API_KEY"] = self.user_controls["GROQ_API_KEY"] = st.session_state["GROQ_API_KEY"] = st.text_input("API Key",
-                                                                                                      type="password")
+                                                                                                      type="password",
+                                                                                                        value=os.getenv("GROQ_API_KEY", ""))
                 # Validate API key
                 if not self.user_controls["GROQ_API_KEY"]:
                     st.warning("⚠️ Please enter your GROQ API key to proceed. Don't have? refer : https://console.groq.com/keys ")
@@ -94,6 +95,19 @@ class LoadStreamlitUI:
                 # Validate API key
                 if not self.user_controls["GEMINI_API_KEY"]:
                     st.warning("⚠️ Please enter your GEMINI API key to proceed. Don't have? refer : https://ai.google.dev/gemini-api/docs/api-key ")
+                   
+                   
+            if self.user_controls["selected_llm"] == 'OpenAI':
+                # Model selection
+                model_options = self.config.get_openai_model_options()
+                self.user_controls["selected_openai_model"] = st.selectbox("Select Model", model_options)
+                # API key input
+                os.environ["OPENAI_API_KEY"] = self.user_controls["OPENAI_API_KEY"] = st.session_state["OPENAI_API_KEY"] = st.text_input("API Key",
+                                                                                                      type="password",
+                                                                                                      value=os.getenv("OPENAI_API_KEY", "")) 
+                # Validate API key
+                if not self.user_controls["OPENAI_API_KEY"]:
+                    st.warning("⚠️ Please enter your OPENAI API key to proceed. Don't have? refer : https://ai.google.dev/gemini-api/docs/api-key ")
                    
             
             if "state" not in st.session_state:

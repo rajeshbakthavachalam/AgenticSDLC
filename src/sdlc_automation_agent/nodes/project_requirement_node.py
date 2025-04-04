@@ -1,4 +1,4 @@
-from src.sdlc_automation_agent.state.sdlc_state import SDLCState, UserStories
+from src.sdlc_automation_agent.state.sdlc_state import SDLCState, UserStoryList
 from langchain_core.messages import SystemMessage
 
 class ProjectRequirementNode:
@@ -17,32 +17,52 @@ class ProjectRequirementNode:
         pass
         
     
-    def generate_user_stories(self, state:SDLCState):
+    def generate_user_stories(self, state: SDLCState):
         """
-            Auto generate the user stories based on the user requirements provided
+        Auto-generate highly detailed and accurate user stories for each requirement.
         """
-        project_name = state['project_name']
-        requirements = state['requirements']
+        project_name = state["project_name"]
+        requirements = state["requirements"]
         feedback_reason = None
-        
+
         prompt = f"""
-        You are an expert in software development and requirements analysis. Based on the project name "{project_name}" and the following requirement:
-        - {requirements}
+        You are a senior software analyst specializing in Agile SDLC and user story generation. 
+        Your task is to generate **a separate and detailed user story for EACH requirement** from the project details below.
 
-        Please generate a user story in Markdown format. The user story should include:
-        - A unique identifier
-        - A title
-        - A detailed description
-        - Priority
-        - Acceptance criteria
+        ---
+        **Project Name:** "{project_name}"
 
-        {f"When creating this user story, please incorporate the following feedback about the requirements: {feedback_reason}" if feedback_reason else ""}
+        **Requirements:** "{requirements}
 
-        Format the user story as a bullet point.
+        ---
+        **Instructions for User Story Generation:**
+        - Create **one user story per requirement**.
+        - Assign a **unique identifier** (e.g., US-001, US-002, etc.).
+        - Provide a **clear and concise title** summarizing the user story.
+        - Write a **detailed description** using the "As a [user role], I want [goal] so that [benefit]" format.
+        - Assign a **priority level** (1 = Critical, 2 = High, 3 = Medium, 4 = Low).
+        - Define **acceptance criteria** with bullet points to ensure testability.
+        - Use **domain-specific terminology** for clarity.
+        
+        {f"Additionally, consider the following feedback while refining the user stories: {feedback_reason}" if feedback_reason else ""}
+
+        ---
+        **Expected Output Format (for each user story):**
+        - Unique Identifier: US-XXX
+        - Title: [User Story Title]
+        - Description:  
+        - As a [user role], I want [feature] so that [benefit].
+        - Priority: [1-4]
+        - Acceptance Criteria:
+        - [Criteria 1]
+        - [Criteria 2]
+        - [Criteria 3]
+
+        Ensure that the user stories are **specific, testable, and aligned with Agile principles**.
         """
-        system_message = prompt.format(project_name= project_name, requirement= requirements)
-        llm_with_structured = self.llm.with_structured_output(UserStories)
-        response = llm_with_structured.invoke(system_message)
+
+        llm_with_structured = self.llm.with_structured_output(UserStoryList)
+        response = llm_with_structured.invoke(prompt)
         state["user_stories"] = response
         return state
     

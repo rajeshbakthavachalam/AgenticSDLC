@@ -3,6 +3,7 @@ import json
 from src.sdlc_automation_agent.ui.streamlit_ui.loadui import LoadStreamlitUI
 from src.sdlc_automation_agent.LLMS.groqllm import GroqLLM
 from src.sdlc_automation_agent.LLMS.geminillm import GeminiLLM
+from src.sdlc_automation_agent.LLMS.openai_llm import OpenAILLM
 from src.sdlc_automation_agent.graph.graph_builder import GraphBuilder
 from src.sdlc_automation_agent.ui.streamlit_ui.display_result import DisplayResultStreamlit
 
@@ -44,6 +45,9 @@ def load_app():
                 model = obj_llm_config.get_llm_model()
             elif selectedLLM == "Groq":
                 obj_llm_config = GroqLLM(user_controls_input=user_input)
+                model = obj_llm_config.get_llm_model()
+            elif selectedLLM == "OpenAI":
+                obj_llm_config = OpenAILLM(user_controls_input=user_input)
                 model = obj_llm_config.get_llm_model()
             
             if not model:
