@@ -40,14 +40,11 @@ class LoadStreamlitUI:
 
         # Multiline text area for requirements
         requirements_input = st.text_area(
-            "Enter the requirements (each requirement should start with '- ').\nWrite each requirement on a new line:"
+            "Enter the requirements. Write each requirement on a new line:"
         )
 
         # Split input into a list of requirements
         requirements = [req.strip() for req in requirements_input.split("\n") if req.strip()]
-
-        # Ensure each requirement starts with '- '
-        requirements = ["- " + req if not req.startswith("- ") else req for req in requirements]
         st.session_state["requirements"] = requirements
 
         # Submit button
