@@ -4,6 +4,7 @@ import json
 
     
 class UserStories(BaseModel):
+    id: int = Field(...,description="The unique identifier of the user story")
     title: str = Field(...,description="The title of the user story")
     description: str = Field(...,description="The description of the user story")
     priority: int = Field(...,description="The priority of the user story")
@@ -16,6 +17,7 @@ class SDLCState(TypedDict):
 
     """    
     project_name: str
+    requirements: list[str]
     user_stories: list[UserStories]
     
     

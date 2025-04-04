@@ -24,13 +24,17 @@ def load_app():
         return
 
     # Text input for user message
-    if st.session_state.IsFetchButtonClicked:
-        user_message = st.session_state.timeframe 
-    else :
-        user_message = st.chat_input("Enter your message:")
+    if st.session_state["isSubmitButtonClicked"]:
+        project_name = st.session_state["project_name"]
+        requirements = st.session_state["requirements"]
+    else:
+        project_name = None
+        requirements = None
 
-
-    if user_message:
+    print(project_name,requirements)
+    
+    if project_name and requirements:
+        print("--------Starting workflow----------")
         try:
             # Configure LLM 
             selectedLLM = user_input.get("selected_llm")
@@ -51,8 +55,8 @@ def load_app():
             graph_builder=GraphBuilder(model)
             try:
                 graph = graph_builder.setup_graph()
-                # DisplayResultStreamlit(graph,user_message).display_result_on_ui()
-                DisplayResultStreamlit(graph,user_message).test_llm_call()
+                DisplayResultStreamlit(graph,project_name,requirements).display_result_on_ui()
+                # DisplayResultStreamlit(graph,user_message).test_llm_call()
             except Exception as e:
                 st.error(f"Error: Graph setup failed - {e}")
                 return

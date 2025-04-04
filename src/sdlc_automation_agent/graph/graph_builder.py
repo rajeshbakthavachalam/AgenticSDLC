@@ -1,35 +1,34 @@
 from langgraph.graph import StateGraph,START, END, MessagesState
-from langgraph.prebuilt import tools_condition, ToolNode
-from langchain_core.prompts import ChatPromptTemplate
-from src.sdlc_automation_agent.state.state import State
-from src.sdlc_automation_agent.nodes.basic_chatbot_node import BasicChatbotNode
-from src.sdlc_automation_agent.tools.search_tool import get_tools, create_tool_node
+from src.sdlc_automation_agent.state.sdlc_state import SDLCState, UserStories
+from src.sdlc_automation_agent.nodes.project_requirement_node import ProjectRequirementNode
 
 class GraphBuilder:
     
-    def __init__(self, model):
-        self.llm = model
-        self.graph_builder = StateGraph(State)
-        
-        
-    def basic_chatbot_build_graph(self):
-        
-        """
-        Builds a basic chatbot graph using LangGraph.
-        This method initializes a chatbot node using the `BasicChatbotNode` class 
-        and integrates it into the graph. The chatbot node is set as both the 
-        entry and exit point of the graph.
-        """
-        
-        self.basic_chatbot_node = BasicChatbotNode(self.llm)
-        self.graph_builder.add_node("chatbot", self.basic_chatbot_node.process)
-        self.graph_builder.add_edge(START, "chatbot")
-        self.graph_builder.add_edge("chatbot", END)
+    def __init__(self, llm):
+        self.llm = llm
+        self.graph_builder = StateGraph(SDLCState)
+                
     
+    def build_sdlc_graph(self):
+        """
+            Configure the graph by adding nodes, edges
+        """
+        
+        self.project_requirement_node = ProjectRequirementNode(self.llm)
+        
+        ## Nodes
+        self.graph_builder.add_node("get_user_requirements", self.project_requirement_node.get_user_requirements)
+        self.graph_builder.add_node("generate_user_stories", self.project_requirement_node.generate_user_stories)
+        
+        ## Edges
+        self.graph_builder.add_edge(START,"get_user_requirements")
+        self.graph_builder.add_edge("get_user_requirements","generate_user_stories")
+        self.graph_builder.add_edge("generate_user_stories",END)
+        
         
     def setup_graph(self):
         """
         Sets up the graph
         """
-        self.basic_chatbot_build_graph()
+        self.build_sdlc_graph()
         return self.graph_builder.compile()
