@@ -9,13 +9,19 @@ class ProjectRequirementNode:
     
     def __init__(self, model):
         self.llm = model
-        
-    def get_user_requirements(self, state:SDLCState):
+      
+    def initialize_project(self, state: SDLCState):
         """
-            Get the user input for the project requirements
+            Performs the project initilazation
+        """
+        state['current_node'] = 'project_initilization'
+        return state
+    
+    def get_user_requirements(self, state: SDLCState):
+        """
+            Gets the requirements from the user
         """
         pass
-        
     
     def generate_user_stories(self, state: SDLCState):
         """
@@ -66,4 +72,8 @@ class ProjectRequirementNode:
         state["user_stories"] = response
         return state
     
+    def review_user_stories(self, state: SDLCState):
+        pass
     
+    def review_user_stories_router(self, state: SDLCState):
+        pass

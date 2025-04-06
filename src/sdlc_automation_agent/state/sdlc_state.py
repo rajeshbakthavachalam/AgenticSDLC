@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import TypedDict, Any, Dict, Literal, Optional
 import json
+import src.sdlc_automation_agent.utils.constants as const
 
     
 class UserStories(BaseModel):
@@ -21,7 +22,19 @@ class SDLCState(TypedDict):
     project_name: str
     requirements: list[str]
     user_stories: UserStoryList
+    current_node: str = const.PROJECT_INITILIZATION
     
+    
+    
+class CustomEncoder(json.JSONEncoder):
+    def default(self, obj):
+        # Check if the object is any kind of Pydantic model
+        if isinstance(obj, BaseModel):
+            return obj.model_dump()
+        # Or check for specific classes if needed
+        # if isinstance(obj, UserStories) or isinstance(obj, DesignDocument):
+        #     return obj.model_dump()
+        return super().default(obj)
     
 
     

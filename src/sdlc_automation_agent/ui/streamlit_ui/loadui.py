@@ -2,9 +2,8 @@ import streamlit as st
 import os
 from datetime import date
 from dotenv import load_dotenv
-
-from langchain_core.messages import AIMessage, HumanMessage
 from src.sdlc_automation_agent.ui.uiconfigfile import Config
+import src.sdlc_automation_agent.utils.constants as const
 
 class LoadStreamlitUI:
     def __init__(self):
@@ -12,18 +11,11 @@ class LoadStreamlitUI:
         self.config = Config() # config
         self.user_controls = {}
     
-    def initialize_session(self):
-        return {
-        "isSubmitButtonClicked": False,
-        "current_step": "requirements",
-        "project_name": "",
-        "requirements": "",
-        "user_stories": "",
-        "po_feedback": "",
-        "generated_code": "",
-        "review_feedback": "",
-        "decision": None
-    }
+    def initialize_session():
+        st.session_state.stage = const.PROJECT_INITILIZATION
+        st.session_state.project_name = ""
+        st.session_state.requirements = ""
+
 
     def load_streamlit_ui(self):
         st.set_page_config(page_title=self.config.get_page_title(), layout="wide")
@@ -31,12 +23,12 @@ class LoadStreamlitUI:
         st.subheader("Let AI agents plan your SDLC journey",
                  divider="rainbow", anchor=False)
         
-       
-        st.session_state["isSubmitButtonClicked"] = False
+        self.initialize_session()
+        
 
         # Input field for project name
         project_name = st.text_input("Enter the project name:")
-        st.session_state["project_name"] = project_name
+        st.session_stat.project_name = project_name
 
         # Multiline text area for requirements
         requirements_input = st.text_area(
@@ -45,7 +37,7 @@ class LoadStreamlitUI:
 
         # Split input into a list of requirements
         requirements = [req.strip() for req in requirements_input.split("\n") if req.strip()]
-        st.session_state["requirements"] = requirements
+        st.session_state.requirements = requirements
 
         # Submit button
         if st.button("Submit"):
