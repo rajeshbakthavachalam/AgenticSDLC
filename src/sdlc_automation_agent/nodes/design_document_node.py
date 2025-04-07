@@ -10,7 +10,5 @@ class DesingDocumentNode:
     def __init__(self, model):
         self.llm = model
     
-
-    
     def create_design_document(self, state: SDLCState):
         pass

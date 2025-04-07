@@ -23,6 +23,8 @@ class SDLCState(TypedDict):
     requirements: list[str]
     user_stories: UserStoryList
     current_node: str = const.PROJECT_INITILIZATION
+    feedback_reason: str
+    review_status: str
     
     
     

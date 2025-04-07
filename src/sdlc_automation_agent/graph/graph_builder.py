@@ -24,24 +24,25 @@ class GraphBuilder:
         self.graph_builder.add_node("initialize_project", self.project_requirement_node.initialize_project)
         self.graph_builder.add_node("get_user_requirements", self.project_requirement_node.get_user_requirements)
         self.graph_builder.add_node("generate_user_stories", self.project_requirement_node.generate_user_stories)
-        # self.graph_builder.add_node("review_user_stories", self.project_requirement_node.review_user_stories)
-        # self.graph_builder.add_node("create_design_document", self.design_document_node.create_design_document)
+        self.graph_builder.add_node("review_user_stories", self.project_requirement_node.review_user_stories)
+        self.graph_builder.add_node("revise_user_stories", self.project_requirement_node.revise_user_stories)
+        self.graph_builder.add_node("create_design_document", self.design_document_node.create_design_document)
         
         ## Edges
         self.graph_builder.add_edge(START,"initialize_project")
         self.graph_builder.add_edge("initialize_project","get_user_requirements")
         self.graph_builder.add_edge("get_user_requirements","generate_user_stories")
-        self.graph_builder.add_edge("generate_user_stories",END)
-        # self.graph_builder.add_edge("generate_user_stories","review_user_stories")
-        # self.graph_builder.add_conditional_edges(
-        #     "review_user_stories",
-        #     self.project_requirement_node.review_user_stories_router,
-        #     {
-        #         "approved": "create_design_document",
-        #         "feedback": "generate_user_stories"
-        #     }
-        # )
-        # self.graph_builder.add_edge("create_design_document",END)
+        self.graph_builder.add_edge("generate_user_stories","review_user_stories") 
+        self.graph_builder.add_conditional_edges(
+            "review_user_stories",
+            self.project_requirement_node.review_user_stories_router,
+            {
+                "approved": "create_design_document",
+                "feedback": "revise_user_stories"
+            }
+        )
+        self.graph_builder.add_edge("revise_user_stories","generate_user_stories")
+        self.graph_builder.add_edge("create_design_document",END)
          
        
         
@@ -66,15 +67,21 @@ class GraphBuilder:
         
         graph =self.graph_builder.compile(
             interrupt_before=[
-                'get_user_requirements'
+                'get_user_requirements',
+                'review_user_stories'
             ],checkpointer=self.memory
         )
-        
+
+        self.save_graph_image(graph)
+            
+        return graph
+    
+    
+    def save_graph_image(self,graph):
+            # ✅ Generate the PNG image
         img_data = graph.get_graph().draw_mermaid_png()
 
         # ✅ Save the image to a file
         graph_path = "workflow_graph.png"
         with open(graph_path, "wb") as f:
-            f.write(img_data)
-            
-        return graph
+            f.write(img_data)        

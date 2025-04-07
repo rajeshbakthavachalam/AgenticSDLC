@@ -29,7 +29,7 @@ class ProjectRequirementNode:
         """
         project_name = state["project_name"]
         requirements = state["requirements"]
-        feedback_reason = None
+        feedback_reason = state.get("feedback_reason", None)
 
         prompt = f"""
         You are a senior software analyst specializing in Agile SDLC and user story generation. 
@@ -73,7 +73,10 @@ class ProjectRequirementNode:
         return state
     
     def review_user_stories(self, state: SDLCState):
+        return state
+    
+    def revise_user_stories(self, state: SDLCState):
         pass
     
     def review_user_stories_router(self, state: SDLCState):
-        pass
+        return state.get("review_status", "approved")  # default to "approved" if not present
