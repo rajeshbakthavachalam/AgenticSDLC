@@ -221,7 +221,6 @@ def load_app():
                         )
                         st.session_state.state = graph_response["state"]
                         st.session_state.stage = const.CREATE_DESIGN_DOC
-                        st.rerun()
 
                 with col2:
                     if st.button("✍️ Give Feedback"):
