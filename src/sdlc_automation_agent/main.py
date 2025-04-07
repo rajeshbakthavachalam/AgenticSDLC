@@ -1,11 +1,9 @@
 import streamlit as st
 import json
-from src.sdlc_automation_agent.ui.streamlit_ui.loadui import LoadStreamlitUI
 from src.sdlc_automation_agent.LLMS.groqllm import GroqLLM
 from src.sdlc_automation_agent.LLMS.geminillm import GeminiLLM
 from src.sdlc_automation_agent.LLMS.openai_llm import OpenAILLM
 from src.sdlc_automation_agent.graph.graph_builder import GraphBuilder
-from src.sdlc_automation_agent.ui.streamlit_ui.display_result import DisplayResultStreamlit
 from src.sdlc_automation_agent.ui.uiconfigfile import Config
 import src.sdlc_automation_agent.utils.constants as const
 from src.sdlc_automation_agent.graph.graph_executor import GraphExecutor
@@ -67,6 +65,13 @@ def load_sidebar_ui(config):
             if not user_controls["OPENAI_API_KEY"]:
                 st.warning("⚠️ Please enter your OPENAI API key to proceed. Don't have? refer : https://ai.google.dev/gemini-api/docs/api-key ")
     
+        if st.button("Reset Session"):
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            
+            initialize_session()
+            st.rerun()
+            
     return user_controls
 
 def load_streamlit_ui(config):
@@ -232,7 +237,6 @@ def load_app():
                             graph_response = graph_executor.review_user_stories(
                                 st.session_state.task_id, status="feedback", feedback=feedback_text.strip()
                             )
-                            st.text_area = ""  # Clear the feedback textarea
                             st.session_state.state = graph_response["state"]
                             st.session_state.stage = const.GENERATE_USER_STORIES  # Stay in same stage to re-review
                             st.rerun()
