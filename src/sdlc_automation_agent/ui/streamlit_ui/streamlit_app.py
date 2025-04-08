@@ -17,7 +17,7 @@ def initialize_session():
     st.session_state.requirements = ""
     st.session_state.task_id = ""
     st.session_state.state = {}
-    st.session_state.show_review_section = True  # flag to show/hide review section
+
 
 def load_sidebar_ui(config):
     user_controls = {}
@@ -186,29 +186,28 @@ def load_app():
                             st.markdown(story.acceptance_criteria.replace("\n", "<br>"), unsafe_allow_html=True)
                             st.divider()
 
-            # If still in review stage, show review UI.
-            if st.session_state.stage == const.GENERATE_USER_STORIES and st.session_state.get("show_review_section", True):
+            # User Story Review Stage.
+            if st.session_state.stage == const.GENERATE_USER_STORIES:
                 st.subheader("Review User Stories")
                 feedback_text = st.text_area("Provide feedback for improving the user stories (optional):")
                 col1, col2 = st.columns(2)
                 with col1:
-                    if st.button("✅ Approve"):
+                    if st.button("✅ Approve User Stories"):
                         st.success("✅ User stories approved.")
-                        st.session_state.show_review_section = False
-                        graph_response = graph_executor.review_user_stories(
-                            st.session_state.task_id, status="approved", feedback=None
+                        graph_response = graph_executor.graph_review_flow(
+                            st.session_state.task_id, status="approved", feedback=None,  review_type=const.REVIEW_USER_STORIES
                         )
                         st.session_state.state = graph_response["state"]
                         st.session_state.stage = const.CREATE_DESIGN_DOC
                         
                 with col2:
-                    if st.button("✍️ Give Feedback"):
+                    if st.button("✍️ Give User Stories Feedback"):
                         if not feedback_text.strip():
                             st.warning("⚠️ Please enter feedback before submitting.")
                         else:
                             st.info("🔄 Sending feedback to revise user stories.")
-                            graph_response = graph_executor.review_user_stories(
-                                st.session_state.task_id, status="feedback", feedback=feedback_text.strip()
+                            graph_response = graph_executor.graph_review_flow(
+                                st.session_state.task_id, status="feedback", feedback=feedback_text.strip(),review_type=const.REVIEW_USER_STORIES
                             )
                             st.session_state.state = graph_response["state"]
                             st.session_state.stage = const.GENERATE_USER_STORIES
@@ -220,15 +219,43 @@ def load_app():
         with tabs[2]:
             st.header("Design Documents")
             if st.session_state.stage == const.CREATE_DESIGN_DOC:
-                st.subheader("Design Document")
+                
                 graph_response = graph_executor.get_design_documents(st.session_state.task_id)
                 st.session_state.state = graph_response["state"]
+                
                 if "design_documents" in st.session_state.state:
                     design_doc = st.session_state.state["design_documents"]        
                     st.subheader("Functional Design Document")
                     st.markdown(design_doc.get("functional", "No functional design document available."))
                     st.subheader("Technical Design Document")
                     st.markdown(design_doc.get("technical", "No technical design document available."))
+                
+             # Design Document Review Stage.
+           
+                st.subheader("Review Design Documents")
+                feedback_text = st.text_area("Provide feedback for improving the design documents (optional):")
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button("✅ Approve Design Documents"):
+                        st.success("✅ Design documents approved.")
+                        graph_response = graph_executor.graph_review_flow(
+                            st.session_state.task_id, status="approved", feedback=None,  review_type=const.REVIEW_DESIGN_DOCUMENTS
+                        )
+                        st.session_state.state = graph_response["state"]
+                        st.session_state.stage = const.CODE_GENERATION
+                        
+                with col2:
+                    if st.button("✍️ Give Design Documents Feedback"):
+                        if not feedback_text.strip():
+                            st.warning("⚠️ Please enter feedback before submitting.")
+                        else:
+                            st.info("🔄 Sending feedback to revise design documents.")
+                            graph_response = graph_executor.graph_review_flow(
+                                st.session_state.task_id, status="feedback", feedback=feedback_text.strip(),review_type=const.REVIEW_DESIGN_DOCUMENTS
+                            )
+                            st.session_state.state = graph_response["state"]
+                            st.session_state.stage = const.CREATE_DESIGN_DOC
+                            st.rerun()
                     
             else:
                 st.info("Design document generation pending or not reached yet.")

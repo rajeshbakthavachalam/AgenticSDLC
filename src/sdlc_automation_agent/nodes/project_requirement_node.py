@@ -14,7 +14,6 @@ class ProjectRequirementNode:
         """
             Performs the project initilazation
         """
-        state['current_node'] = 'project_initilization'
         return state
     
     def get_user_requirements(self, state: SDLCState):

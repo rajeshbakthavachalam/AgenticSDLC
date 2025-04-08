@@ -26,7 +26,6 @@ class SDLCState(TypedDict):
     project_name: str
     requirements: list[str]
     user_stories: UserStoryList
-    current_node: str = const.PROJECT_INITILIZATION
     user_stories_feedback: str
     user_stories_review_status: str
     design_documents: DesignDocument

@@ -39,20 +39,22 @@ class GraphExecutor:
         return self.update_and_resume_graph(saved_state,task_id,"get_user_requirements")
 
 
-    def review_user_stories(self, task_id, status, feedback):
-        
+    def graph_review_flow(self, task_id, status, feedback, review_type):
         saved_state = get_state_from_redis(task_id)
         
         if saved_state:
-            if status == "approved":
-                saved_state['current_node'] = const.CREATE_DESIGN_DOC
-            elif status == "feedback":
-                saved_state['current_node'] = const.GENERATE_USER_STORIES
+            if review_type == const.REVIEW_USER_STORIES:
+                saved_state['user_stories_review_status'] = status
                 saved_state['user_stories_feedback'] = feedback
-
-            saved_state['user_stories_review_status'] = status ## pass the status to the graph for routing
+                node_name = "review_user_stories"
+            elif review_type == const.REVIEW_DESIGN_DOCUMENTS:
+                saved_state['design_documents_review_status'] = status
+                saved_state['design_documents_feedback'] = feedback
+                node_name = "review_design_documents"
+            else:
+                raise ValueError(f"Unsupported review type: {review_type}")
             
-        return self.update_and_resume_graph(saved_state,task_id,"review_user_stories")
+        return self.update_and_resume_graph(saved_state,task_id,node_name)
         
     
     def update_and_resume_graph(self, saved_state,task_id, as_node):
