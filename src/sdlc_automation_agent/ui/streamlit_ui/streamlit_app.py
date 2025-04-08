@@ -7,7 +7,7 @@ from src.sdlc_automation_agent.graph.graph_builder import GraphBuilder
 from src.sdlc_automation_agent.ui.uiconfigfile import Config
 import src.sdlc_automation_agent.utils.constants as const
 from src.sdlc_automation_agent.graph.graph_executor import GraphExecutor
-from src.sdlc_automation_agent.state.sdlc_state import SDLCState, UserStoryList
+from src.sdlc_automation_agent.state.sdlc_state import DesignDocument, UserStoryList
 import os
 
 
@@ -19,38 +19,60 @@ def initialize_session():
     st.session_state.state = {}
     st.session_state.show_review_section = True  # flag to show/hide review section
 
-
 def load_sidebar_ui(config):
     user_controls = {}
+    
     with st.sidebar:
         # Get options from config
         llm_options = config.get_llm_options()
+
         # LLM selection
         user_controls["selected_llm"] = st.selectbox("Select LLM", llm_options)
+
         if user_controls["selected_llm"] == 'Groq':
+            # Model selection
             model_options = config.get_groq_model_options()
             user_controls["selected_groq_model"] = st.selectbox("Select Model", model_options)
-            os.environ["GROQ_API_KEY"] = user_controls["GROQ_API_KEY"] = st.session_state["GROQ_API_KEY"] = st.text_input(
-                "API Key", type="password", value=os.getenv("GROQ_API_KEY", "")
-            )
+            # API key input
+            os.environ["GROQ_API_KEY"] = user_controls["GROQ_API_KEY"] = st.session_state["GROQ_API_KEY"] = st.text_input("API Key",
+                                                                                                    type="password",
+                                                                                                    value=os.getenv("GROQ_API_KEY", ""))
+            # Validate API key
             if not user_controls["GROQ_API_KEY"]:
                 st.warning("⚠️ Please enter your GROQ API key to proceed. Don't have? refer : https://console.groq.com/keys ")
+                
         if user_controls["selected_llm"] == 'Gemini':
+            # Model selection
             model_options = config.get_gemini_model_options()
             user_controls["selected_gemini_model"] = st.selectbox("Select Model", model_options)
-            os.environ["GEMINI_API_KEY"] = user_controls["GEMINI_API_KEY"] = st.session_state["GEMINI_API_KEY"] = st.text_input(
-                "API Key", type="password", value=os.getenv("GEMINI_API_KEY", "")
-            )
+            # API key input
+            os.environ["GEMINI_API_KEY"] = user_controls["GEMINI_API_KEY"] = st.session_state["GEMINI_API_KEY"] = st.text_input("API Key",
+                                                                                                    type="password",
+                                                                                                    value=os.getenv("GEMINI_API_KEY", "")) 
+            # Validate API key
             if not user_controls["GEMINI_API_KEY"]:
                 st.warning("⚠️ Please enter your GEMINI API key to proceed. Don't have? refer : https://ai.google.dev/gemini-api/docs/api-key ")
+                
+                
         if user_controls["selected_llm"] == 'OpenAI':
+            # Model selection
             model_options = config.get_openai_model_options()
             user_controls["selected_openai_model"] = st.selectbox("Select Model", model_options)
-            os.environ["OPENAI_API_KEY"] = user_controls["OPENAI_API_KEY"] = st.session_state["OPENAI_API_KEY"] = st.text_input(
-                "API Key", type="password", value=os.getenv("OPENAI_API_KEY", "")
-            )
+            # API key input
+            os.environ["OPENAI_API_KEY"] = user_controls["OPENAI_API_KEY"] = st.session_state["OPENAI_API_KEY"] = st.text_input("API Key",
+                                                                                                    type="password",
+                                                                                                    value=os.getenv("OPENAI_API_KEY", "")) 
+            # Validate API key
             if not user_controls["OPENAI_API_KEY"]:
                 st.warning("⚠️ Please enter your OPENAI API key to proceed. Don't have? refer : https://ai.google.dev/gemini-api/docs/api-key ")
+    
+        if st.button("Reset Session"):
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            
+            initialize_session()
+            st.rerun()
+            
     return user_controls
 
 
@@ -103,7 +125,7 @@ def load_app():
             return
 
         # Create tabs for different stages
-        tabs = st.tabs(["Project Requirement", "User Stories", "Design Documents", "Other Stages"])
+        tabs = st.tabs(["Project Requirement", "User Stories", "Design Documents", "Coding"])
 
         # ---------------- Tab 1: Project Requirement ----------------
         with tabs[0]:
@@ -124,7 +146,7 @@ def load_app():
                     st.rerun()
 
             # If stage has progressed beyond initialization, show requirements input and details.
-            if st.session_state.stage in [const.REQUIREMENT_COLLECTION, const.GENERATE_USER_STORIES, const.CREATE_DESIGN_DOC]:
+            if st.session_state.stage in [const.REQUIREMENT_COLLECTION, const.GENERATE_USER_STORIES]:
                 requirements_input = st.text_area(
                     "Enter the requirements. Write each requirement on a new line:",
                     value="\n".join(st.session_state.get("requirements", []))
@@ -178,7 +200,7 @@ def load_app():
                         )
                         st.session_state.state = graph_response["state"]
                         st.session_state.stage = const.CREATE_DESIGN_DOC
-                        st.rerun()
+                        
                 with col2:
                     if st.button("✍️ Give Feedback"):
                         if not feedback_text.strip():
@@ -192,21 +214,28 @@ def load_app():
                             st.session_state.stage = const.GENERATE_USER_STORIES
                             st.rerun()
             else:
-                st.info("User stories have been reviewed or are not yet generated.")
+                st.info("User stories generation pending or not reached yet.")
 
         # ---------------- Tab 3: Design Documents ----------------
         with tabs[2]:
             st.header("Design Documents")
             if st.session_state.stage == const.CREATE_DESIGN_DOC:
                 st.subheader("Design Document")
-                design_response = st.session_state.state.get("design_document", "Design document is being generated...")
-                st.write(design_response)
+                graph_response = graph_executor.get_design_documents(st.session_state.task_id)
+                st.session_state.state = graph_response["state"]
+                if "design_documents" in st.session_state.state:
+                    design_doc = st.session_state.state["design_documents"]        
+                    st.subheader("Functional Design Document")
+                    st.markdown(design_doc.get("functional", "No functional design document available."))
+                    st.subheader("Technical Design Document")
+                    st.markdown(design_doc.get("technical", "No technical design document available."))
+                    
             else:
                 st.info("Design document generation pending or not reached yet.")
 
-        # ---------------- Tab 4: Other Stages ----------------
+        # ---------------- Tab 4: Coding ----------------
         with tabs[3]:
-            st.header("Other Stages")
+            st.header("Coding")
             st.info("Future stages will be displayed here.")
 
     except Exception as e:

@@ -2,6 +2,7 @@ from langgraph.graph import StateGraph,START, END, MessagesState
 from src.sdlc_automation_agent.state.sdlc_state import SDLCState, UserStories
 from src.sdlc_automation_agent.nodes.project_requirement_node import ProjectRequirementNode
 from src.sdlc_automation_agent.nodes.design_document_node import DesingDocumentNode
+from src.sdlc_automation_agent.nodes.coding_node import CodingNode
 from langgraph.checkpoint.memory import MemorySaver
 
 class GraphBuilder:
@@ -19,6 +20,7 @@ class GraphBuilder:
         
         self.project_requirement_node = ProjectRequirementNode(self.llm)
         self.design_document_node = DesingDocumentNode(self.llm)
+        self.coding_node = CodingNode(self.llm)
         
         ## Nodes
         self.graph_builder.add_node("initialize_project", self.project_requirement_node.initialize_project)
@@ -26,7 +28,10 @@ class GraphBuilder:
         self.graph_builder.add_node("generate_user_stories", self.project_requirement_node.generate_user_stories)
         self.graph_builder.add_node("review_user_stories", self.project_requirement_node.review_user_stories)
         self.graph_builder.add_node("revise_user_stories", self.project_requirement_node.revise_user_stories)
-        self.graph_builder.add_node("create_design_document", self.design_document_node.create_design_document)
+        self.graph_builder.add_node("create_design_documents", self.design_document_node.create_design_documents)
+        self.graph_builder.add_node("review_design_documents", self.design_document_node.review_design_documents)
+        self.graph_builder.add_node("revise_design_documents", self.design_document_node.revise_design_documents)
+        self.graph_builder.add_node("generate_code", self.coding_node.generate_code)
         
         ## Edges
         self.graph_builder.add_edge(START,"initialize_project")
@@ -37,12 +42,24 @@ class GraphBuilder:
             "review_user_stories",
             self.project_requirement_node.review_user_stories_router,
             {
-                "approved": "create_design_document",
+                "approved": "create_design_documents",
                 "feedback": "revise_user_stories"
             }
         )
         self.graph_builder.add_edge("revise_user_stories","generate_user_stories")
-        self.graph_builder.add_edge("create_design_document",END)
+        self.graph_builder.add_edge("create_design_documents","review_design_documents")
+        self.graph_builder.add_conditional_edges(
+            "review_design_documents",
+            self.project_requirement_node.review_user_stories_router,
+            {
+                "approved": "generate_code",
+                "feedback": "revise_design_documents"
+            }
+        )
+        self.graph_builder.add_edge("revise_design_documents","create_design_documents")
+        self.graph_builder.add_edge("generate_code",END)
+       
+       
          
        
         
@@ -68,7 +85,8 @@ class GraphBuilder:
         graph =self.graph_builder.compile(
             interrupt_before=[
                 'get_user_requirements',
-                'review_user_stories'
+                'review_user_stories',
+                'review_design_documents'
             ],checkpointer=self.memory
         )
 

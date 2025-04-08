@@ -13,7 +13,11 @@ class UserStories(BaseModel):
 
 class UserStoryList(BaseModel):
     user_stories: list[UserStories]
-    
+
+class DesignDocument(BaseModel):
+    functional: str = Field(..., description="Holds the functional design Document")
+    technical: str = Field(..., description="Holds the technical design Document")
+   
 class SDLCState(TypedDict):
     """
     Represents the structure of the state used in the SDLC graph
@@ -23,8 +27,11 @@ class SDLCState(TypedDict):
     requirements: list[str]
     user_stories: UserStoryList
     current_node: str = const.PROJECT_INITILIZATION
-    feedback_reason: str
-    review_status: str
+    user_stories_feedback: str
+    user_stories_review_status: str
+    design_documents: DesignDocument
+    design_documents_feedback: str
+    design_documents_review_status: str
     
     
     

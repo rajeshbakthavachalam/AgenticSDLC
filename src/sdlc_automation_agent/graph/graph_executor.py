@@ -7,6 +7,9 @@ class GraphExecutor:
     def __init__(self, graph):
         self.graph = graph
 
+    def get_thread(self, task_id):
+        return {"configurable": {"thread_id": task_id}}
+    
     def start_workflow(self, project_name: str):
         
         graph = self.graph
@@ -45,9 +48,9 @@ class GraphExecutor:
                 saved_state['current_node'] = const.CREATE_DESIGN_DOC
             elif status == "feedback":
                 saved_state['current_node'] = const.GENERATE_USER_STORIES
-                saved_state['feedback_reason'] = feedback
+                saved_state['user_stories_feedback'] = feedback
 
-            saved_state['review_status'] = status ## pass the status to the graph for routing
+            saved_state['user_stories_review_status'] = status ## pass the status to the graph for routing
             
         return self.update_and_resume_graph(saved_state,task_id,"review_user_stories")
         
@@ -70,5 +73,7 @@ class GraphExecutor:
         
         return {"task_id" : task_id, "state": state}
 
-    def get_thread(self, task_id):
-        return {"configurable": {"thread_id": task_id}}
+
+    def get_design_documents(self, task_id):
+        saved_state = get_state_from_redis(task_id)
+        return {"task_id" : task_id, "state": saved_state}
