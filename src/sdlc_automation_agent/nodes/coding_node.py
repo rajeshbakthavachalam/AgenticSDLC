@@ -14,52 +14,44 @@ class CodingNode:
     ## ---- Code Generation ----- ##
     def generate_code(self, state: SDLCState):
         """
-            Generates the code for the requirements in the design document
+            Generates the code for the given SDLC state as multiple Python files.
         """
         print("----- Generating the code ----")
         
         requirements = state.get('requirements', '')
         user_stories = state.get('user_stories', '')
-        code_feedback = None
-        security_feedback = None
-        
-        if 'code_generated' in state:
-            code_feedback = state.get('code_review_comments','')
-        
-        if 'security_recommendations' in state:
-            security_feedback = state.get('security_recommendations','')
+        code_feedback = state.get('code_review_comments', '') if 'code_generated' in state else ""
+        security_feedback = state.get('security_recommendations', '') if 'security_recommendations' in state else ""
         
         prompt = f"""
-        Generate Python code based on the following SDLC state:
+        Generate a complete Python project organized as multiple code files. 
+        Based on the following SDLC state, generate only the Python code files with their complete implementations. 
+        Do NOT include any explanations, requirements text, or design document details in the output—only code files with proper names and code content.
 
-            Project Name: {state['project_name']}
+        SDLC State:
+        ---------------
+        Project Name: {state['project_name']}
 
-            Requirements:
-            {self.utility.format_list(requirements)}
-            
-            User Stories:
-            {self.utility.format_user_stories(user_stories)}
-            
-            Functional Design Document:
-            {state['design_documents']['functional']}
+        Requirements:
+        {self.utility.format_list(requirements)}
 
-            Technical Design Document:
-            {state['design_documents']['technical']}
+        User Stories:
+        {self.utility.format_user_stories(user_stories)}
 
-            {f"When generating this code, please incorporate the following feedback: {code_feedback}" if code_feedback else ""}
-            
-            {f"Also generating this code, please incorporate the following security recommendations: {security_feedback}" if security_feedback else ""}
-                         
-            The generated Python code should include:
+        Functional Design Document:
+        {state['design_documents']['functional']}
 
-            1. **Comments for Requirements**: Add each requirement as a comment in the generated code.
-            2. **User Stories Implementation**: Include placeholders for each user story, with its description and acceptance criteria as comments.
-            3. **Functional Design Reference**: Incorporate the functional design document content as a comment in the relevant section.
-            4. **Technical Design Reference**: Include the technical design document details in a comment under its section.
-            5. **Modularity**: Structure the code to include placeholders for different functionalities derived from the SDLC state, with clear comments indicating where each functionality should be implemented.
-            6. **Python Formatting**: The generated code should follow Python syntax and best practices.
+        Technical Design Document:
+        {state['design_documents']['technical']}
 
-            Ensure the output code is modular, well-commented, and ready for development.
+        {"Note: Incorporate the following code review feedback: " + code_feedback if code_feedback else ""}
+        {"Note: Apply the following security recommendations: " + security_feedback if security_feedback else ""}
+
+        Instructions:
+        - Structure the output as multiple code files (for example, "main.py", "module1.py", etc.), each separated clearly.
+        - Each file should contain only the code necessary for a modular, fully-functional project based on the input state.
+        - Do not output any additional text, explanations, or commentary outside the code files.
+        - Ensure the code follows Python best practices, is syntactically correct, and is ready for development.
         """
         response = self.llm.invoke(prompt)
         state['code_generated'] = response.content
