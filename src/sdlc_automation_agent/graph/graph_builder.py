@@ -43,6 +43,10 @@ class GraphBuilder:
         self.graph_builder.add_node("fix_code_after_security_review", self.coding_node.fix_code_after_security_review)
        
         self.graph_builder.add_node("write_test_cases", self.coding_node.write_test_cases)
+        self.graph_builder.add_node("review_test_cases", self.coding_node.review_test_cases)
+        self.graph_builder.add_node("revise_test_cases", self.coding_node.revise_test_cases)
+        
+        self.graph_builder.add_node("qa_testing", self.coding_node.qa_testing)
         
         
         ## Edges
@@ -89,9 +93,66 @@ class GraphBuilder:
             }
         )
         self.graph_builder.add_edge("fix_code_after_security_review","generate_code")
-        self.graph_builder.add_edge("write_test_cases", END)
+        self.graph_builder.add_edge("write_test_cases", "review_test_cases")
+        self.graph_builder.add_conditional_edges(
+            "review_test_cases",
+            self.coding_node.review_test_cases_router,
+            {
+                "approved": "qa_testing",
+                "feedback": "revise_test_cases"
+            }
+        )
+        self.graph_builder.add_edge("revise_test_cases", "write_test_cases")
+        self.graph_builder.add_edge("qa_testing", END)
+         
         
+    def setup_graph(self):
+        """
+        Sets up the graph
+        """
+        self.build_sdlc_graph()
+        return self.graph_builder.compile(
+            interrupt_before=[
+                'get_user_requirements',
+                'review_user_stories',
+                'review_design_documents',
+                'code_review',
+                'security_review',
+                'review_test_cases'
+            ],checkpointer=self.memory
+        )
+        
+             
+    # def setup_graph(self):
+    #     """
+    #     Sets up the graph
+    #     """
+    #     self.build_sdlc_graph()
+    #     graph =self.graph_builder.compile(
+    #         interrupt_before=[
+    #             'get_user_requirements',
+    #             'review_user_stories',
+    #             'review_design_documents',
+    #             'code_review',
+    #             'security_review',
+    #             'review_test_cases'
+    #         ],checkpointer=self.memory
+    #     )
+    #     self.save_graph_image(graph)         
+    #     return graph
     
+    
+    def save_graph_image(self,graph):
+        # Generate the PNG image
+        img_data = graph.get_graph().draw_mermaid_png()
+
+        # Save the image to a file
+        graph_path = "workflow_graph.png"
+        with open(graph_path, "wb") as f:
+            f.write(img_data)        
+            
+            
+    ## ---------- For Testing Only ---------- ##
     def build_test_graph(self):
         
         self.project_requirement_node = ProjectRequirementNode(self.llm)
@@ -152,57 +213,6 @@ class GraphBuilder:
         )
         self.graph_builder.add_edge("fix_code_after_security_review","generate_code")
         self.graph_builder.add_edge("write_test_cases", END)
-        
-       
-         
-        
-    def setup_graph(self):
-        """
-        Sets up the graph
-        """
-        self.build_sdlc_graph()
-        return self.graph_builder.compile(
-            interrupt_before=[
-                'get_user_requirements',
-                'review_user_stories',
-                'review_design_documents',
-                'code_review',
-                'security_review'
-            ],checkpointer=self.memory
-        )
-        
-             
-    # def setup_graph(self):
-    #     """
-    #     Sets up the graph
-    #     """
-    #     self.build_sdlc_graph()
-        
-    #     graph =self.graph_builder.compile(
-    #         interrupt_before=[
-    #             'get_user_requirements',
-    #             'review_user_stories',
-    #             'review_design_documents',
-    #             'code_review',
-    #             'security_review'
-    #         ],checkpointer=self.memory
-    #     )
-
-    #     self.save_graph_image(graph)
-            
-    #     return graph
-    
-    
-    def save_graph_image(self,graph):
-        # Generate the PNG image
-        img_data = graph.get_graph().draw_mermaid_png()
-
-        # Save the image to a file
-        graph_path = "workflow_graph.png"
-        with open(graph_path, "wb") as f:
-            f.write(img_data)        
-            
-            
             
     def setup_test_graph(self):
         """
