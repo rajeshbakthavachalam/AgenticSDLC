@@ -33,10 +33,17 @@ class SDLCState(TypedDict):
     design_documents_review_status: str
     code_generated: str
     code_review_comments: str
+    code_review_feedback: str
     code_review_status: str
     security_recommendations: str
     security_review_comments: str
     security_review_status: str
+    test_cases: str
+    test_case_review_status: str
+    test_case_review_feedback: str
+    qa_testing_status: str
+    qa_testing_comments: str
+    qa_testing_feedback: str
     
     
     

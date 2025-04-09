@@ -55,12 +55,16 @@ class GraphExecutor:
                 node_name = "review_design_documents"
             elif review_type == const.REVIEW_CODE:
                 saved_state['code_review_status'] = status
-                saved_state['code_review_comments'] = feedback
+                saved_state['code_review_feedback'] = feedback
                 node_name = "code_review"
             elif review_type == const.REVIEW_SECURITY_RECOMMENDATIONS:
                 saved_state['security_review_status'] = status
                 saved_state['security_review_comments'] = feedback
-                node_name = "security_review"    
+                node_name = "security_review"   
+            elif review_type == const.REVIEW_TEST_CASES:
+                saved_state['test_case_review_status'] = status
+                saved_state['test_case_review_feedback'] = feedback
+                node_name = "review_test_cases"    
             else:
                 raise ValueError(f"Unsupported review type: {review_type}")
             
