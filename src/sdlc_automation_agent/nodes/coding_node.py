@@ -27,7 +27,7 @@ class CodingNode:
             code_feedback = state.get('code_review_comments','')
         
         if 'security_recommendations' in state:
-            security_feedback = state.get('security_review_comments','')
+            security_feedback = state.get('security_recommendations','')
         
         prompt = f"""
         Generate Python code based on the following SDLC state:
@@ -39,16 +39,16 @@ class CodingNode:
             
             User Stories:
             {self.utility.format_user_stories(user_stories)}
-
-            ### Functional Design Document:
+            
+            Functional Design Document:
             {state['design_documents']['functional']}
 
-            ### Technical Design Document:
+            Technical Design Document:
             {state['design_documents']['technical']}
 
             {f"When generating this code, please incorporate the following feedback: {code_feedback}" if code_feedback else ""}
             
-             {f"Also generating this code, please incorporate the following security feedback: {security_feedback}" if security_feedback else ""}
+            {f"Also generating this code, please incorporate the following security recommendations: {security_feedback}" if security_feedback else ""}
                          
             The generated Python code should include:
 
