@@ -1,5 +1,5 @@
 from src.sdlc_automation_agent.state.sdlc_state import SDLCState, DesignDocument
-from langchain_core.messages import SystemMessage
+from src.sdlc_automation_agent.utils.Utility import Utility
 
 class DesingDocumentNode:
     """
@@ -9,6 +9,7 @@ class DesingDocumentNode:
     
     def __init__(self, model):
         self.llm = model
+        self.utility = Utility()
     
     def create_design_documents(self, state: SDLCState):
         """
@@ -60,10 +61,10 @@ class DesingDocumentNode:
             bullet points, tables, and code blocks where appropriate.
             
             Requirements:
-            {self._format_list(requirements)}
+            {self.utility.format_list(requirements)}
             
             User Stories:
-            {self._format_user_stories(user_stories)}
+            {self.utility.format_user_stories(user_stories)}
 
              {f"When creating this functional design document, please incorporate the following feedback about the requirements: {design_feedback}" if design_feedback else ""}
             
@@ -100,10 +101,10 @@ class DesingDocumentNode:
                 bullet points, tables, code blocks, and diagrams described in text form where appropriate.
                 
                 Requirements:
-                {self._format_list(requirements)}
-                
+                {self.utility.format_list(requirements)}
+            
                 User Stories:
-                {self._format_user_stories(user_stories)}
+                {self.utility.format_user_stories(user_stories)}
 
                 {f"When creating this technical design document, please incorporate the following feedback about the requirements: {design_feedback}" if design_feedback else ""}
                 
@@ -129,22 +130,6 @@ class DesingDocumentNode:
             response = self.llm.invoke(prompt)
             return response.content
     
-    def _format_list(self, items):
-        """Format list items nicely for prompt"""
-        return '\n'.join([f"- {item}" for item in items])
-    
-    def _format_user_stories(self, stories):
-        """Format user stories nicely for prompt"""
-        formatted_stories = []
-        for story in stories:
-            if hasattr(story, 'id') and hasattr(story, 'title') and hasattr(story, 'description'):
-                # Handle class instance
-                formatted_stories.append(f"- ID: {story.id}\n  Title: {story.title}\n  Description: {story.description}")
-            elif isinstance(story, dict):
-                # Handle dictionary
-                formatted_stories.append(f"- ID: {story.get('id', 'N/A')}\n  Title: {story.get('title', 'N/A')}\n  Description: {story.get('description', 'N/A')}")
-        return '\n'.join(formatted_stories)
-    
     def review_design_documents(self, state: SDLCState):
         return state
     
@@ -156,3 +141,4 @@ class DesingDocumentNode:
             Evaluates design review is required or not.
         """
         return state.get("design_documents_review_status", "approved")  # default to "approved" if not present
+    

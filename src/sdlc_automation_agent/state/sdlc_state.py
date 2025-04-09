@@ -31,6 +31,12 @@ class SDLCState(TypedDict):
     design_documents: DesignDocument
     design_documents_feedback: str
     design_documents_review_status: str
+    code_generated: str
+    code_review_comments: str
+    code_review_status: str
+    security_recommendations: str
+    security_review_comments: str
+    security_review_status: str
     
     
     

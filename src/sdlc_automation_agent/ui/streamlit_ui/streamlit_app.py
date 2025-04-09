@@ -125,7 +125,7 @@ def load_app():
             return
 
         # Create tabs for different stages
-        tabs = st.tabs(["Project Requirement", "User Stories", "Design Documents", "Coding"])
+        tabs = st.tabs(["Project Requirement", "User Stories", "Design Documents", "Code Generation", "Test Cases"])
 
         # ---------------- Tab 1: Project Requirement ----------------
         with tabs[0]:
@@ -220,7 +220,7 @@ def load_app():
             st.header("Design Documents")
             if st.session_state.stage == const.CREATE_DESIGN_DOC:
                 
-                graph_response = graph_executor.get_design_documents(st.session_state.task_id)
+                graph_response = graph_executor.get_updated_state(st.session_state.task_id)
                 st.session_state.state = graph_response["state"]
                 
                 if "design_documents" in st.session_state.state:
@@ -230,8 +230,8 @@ def load_app():
                     st.subheader("Technical Design Document")
                     st.markdown(design_doc.get("technical", "No technical design document available."))
                 
-             # Design Document Review Stage.
-           
+                # Design Document Review Stage.
+                st.divider()
                 st.subheader("Review Design Documents")
                 feedback_text = st.text_area("Provide feedback for improving the design documents (optional):")
                 col1, col2 = st.columns(2)
@@ -262,8 +262,65 @@ def load_app():
 
         # ---------------- Tab 4: Coding ----------------
         with tabs[3]:
-            st.header("Coding")
-            st.info("Future stages will be displayed here.")
+            st.header("Code Genearation")
+            if st.session_state.stage in [const.CODE_GENERATION, const.SECURITY_REVIEW]:
+                
+                graph_response = graph_executor.get_updated_state(st.session_state.task_id)
+                st.session_state.state = graph_response["state"]
+                
+                if "code_generated" in st.session_state.state:
+                    code_generated = st.session_state.state["code_generated"]        
+                    st.subheader("Code Files")
+                    st.markdown(code_generated)
+                    
+                st.divider()
+                
+                if "security_recommendations" in st.session_state.state:
+                    security_recommendations = st.session_state.state["security_recommendations"]        
+                    st.subheader("Security Recommendations")
+                    st.markdown(security_recommendations)
+                
+                if st.session_state.stage == const.CODE_GENERATION:
+                    review_type = const.REVIEW_CODE
+                elif st.session_state.stage == const.SECURITY_REVIEW:
+                    review_type = const.REVIEW_SECURITY_RECOMMENDATIONS
+                
+                # Code Review Stage.
+                st.divider()
+                st.subheader("Review Details")
+                feedback_text = st.text_area("Provide feedback (optional):")
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button("✅ Approve Code"):
+                        graph_response = graph_executor.graph_review_flow(
+                            st.session_state.task_id, status="approved", feedback=None, review_type=review_type
+                        )
+                        st.session_state.state = graph_response["state"]
+                        if st.session_state.stage == const.CODE_GENERATION:
+                            st.session_state.stage = const.SECURITY_REVIEW
+                            st.rerun()
+                        elif st.session_state.stage == const.SECURITY_REVIEW:
+                            st.session_state.stage = const.WRITE_TEST_CASES
+                            
+                with col2:
+                    if st.button("✍️ Give Feedback"):
+                        if not feedback_text.strip():
+                            st.warning("⚠️ Please enter feedback before submitting.")
+                        else:
+                            st.info("🔄 Sending feedback to revise code generation.")
+                            graph_response = graph_executor.graph_review_flow(
+                                st.session_state.task_id, status="feedback", feedback=feedback_text.strip(),review_type=review_type
+                            )
+                            st.session_state.state = graph_response["state"]
+                            st.session_state.stage = const.CODE_GENERATION
+                            st.rerun()
+                    
+            else:
+                st.info("Code generation pending or not reached yet.")
+                
+        # ---------------- Tab 5: Test Cases ----------------
+        with tabs[4]:
+            st.header("Test Cases")
 
     except Exception as e:
         raise ValueError(f"Error occured with Exception : {e}")
