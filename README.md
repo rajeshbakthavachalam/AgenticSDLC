@@ -1,5 +1,5 @@
-# AI Based SDLC Automation Agent
-AI Agent to automate the complete SDLC process starting from user requirements till deployment
+# Pilot your entire software lifecycle from idea to release
+The development pilot guiding you from requirements to deployment.
 
 ## Setup Instruction
 - Clone the repo
