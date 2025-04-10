@@ -73,6 +73,9 @@ def load_sidebar_ui(config):
             initialize_session()
             st.rerun()
             
+        st.subheader("Workflow Overview")
+        st.image("workflow_graph.png")
+            
     return user_controls
 
 
