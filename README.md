@@ -1,5 +1,6 @@
-# Pilot your entire software lifecycle from idea to release
+# ✨ DevPilot
 The development pilot guiding you from requirements to deployment.
+_Pilot your entire software lifecycle from idea to release_
 
 ## Setup Instruction
 - Clone the repo
