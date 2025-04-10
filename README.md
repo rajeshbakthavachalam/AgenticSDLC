@@ -22,6 +22,7 @@ DevPilot uses a state-driven graph (powered by [LangGraph](https://github.com/la
 - **Interactive Review & Feedback:** Dynamic review cycles at multiple stages with options to approve or provide feedback with Humman-in-the-Loop.
 
 ## Project Structure
+```plaintext
 DevPilot/
 ├── artifacts/              # Generated Markdown artifact files
 ├── src/
@@ -40,6 +41,7 @@ DevPilot/
 ├── workflow_graph.png      
 ├── .env                    # Environment variables (API keys, etc.)
 └── .gitignore
+```
 
 ## Setup Instruction
 - Clone the repo
