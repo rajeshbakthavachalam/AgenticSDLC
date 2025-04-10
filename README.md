@@ -20,7 +20,6 @@ DevPilot uses a state-driven graph (powered by [LangGraph](https://github.com/la
   - QA Testing Comments
   - Deployment Feedback
 - **Interactive Review & Feedback:** Dynamic review cycles at multiple stages with options to approve or provide feedback with Humman-in-the-Loop.
-- **Workflow Visualization:** A Mermaid diagram of the entire SDLC process is generated (saved as `workflow_graph.png`).
 
 ## Project Structure
 DevPilot/
@@ -36,7 +35,7 @@ DevPilot/
 │       ├── utils/          # Utility functions or classes (formatting, helpers, etc.)
 ├── app.py                  # Main entry script (e.g., Streamlit or other CLI)
 ├── LICENSE
-├── README.md              
+├── README.md
 ├── requirements.txt        # Python dependencies
 ├── workflow_graph.png      
 ├── .env                    # Environment variables (API keys, etc.)
@@ -50,6 +49,10 @@ DevPilot/
 - Pull the Redis image using `docker pull redis`
 - Run the Redis container using `docker run -p 6379:6379 redis` (Docker is used to store the state of the graph in Redis)
 - Run the streamlit app using `streamlit run app.py`
+
+
+## Workflow Graph
+![](workflow_graph.png)
 
 ### TODO
 - Fast API Integration
