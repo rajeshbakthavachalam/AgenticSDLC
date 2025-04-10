@@ -125,7 +125,7 @@ def load_app():
             return
 
         # Create tabs for different stages
-        tabs = st.tabs(["Project Requirement", "User Stories", "Design Documents", "Code Generation", "Test Cases"])
+        tabs = st.tabs(["Project Requirement", "User Stories", "Design Documents", "Code Generation", "Test Cases", "QA Testing", "Deployment"])
 
         # ---------------- Tab 1: Project Requirement ----------------
         with tabs[0]:
@@ -343,7 +343,6 @@ def load_app():
                 
                 if "test_cases" in st.session_state.state:
                     test_cases = st.session_state.state["test_cases"]        
-                    st.subheader("Test Cases")
                     st.markdown(test_cases)
                 
                 # Test Cases Review Stage.
@@ -374,7 +373,60 @@ def load_app():
                             st.rerun()
                     
             else:
-                st.info("Design document generation pending or not reached yet.")
+                st.info("Test Cases generation pending or not reached yet.")
+                
+        # ---------------- Tab 6: QA Testing ----------------
+        with tabs[5]:
+            st.header("QA Testing")
+            if st.session_state.stage == const.QA_TESTING:
+                
+                graph_response = graph_executor.get_updated_state(st.session_state.task_id)
+                st.session_state.state = graph_response["state"]
+                
+                if "qa_testing_comments" in st.session_state.state:
+                    qa_testing = st.session_state.state["qa_testing_comments"]        
+                    st.markdown(qa_testing)
+                
+                # QA Testing Review Stage.
+                st.divider()
+                st.subheader("Review QA Testing Comments")
+                col1, col2 = st.columns(2)
+                with col1:
+                    if  st.button("✅ Approve Testing"):
+                        st.success("✅ QA Testing approved.")
+                        graph_response = graph_executor.graph_review_flow(
+                            st.session_state.task_id, status="approved", feedback=None,  review_type=const.REVIEW_QA_TESTING
+                        )
+                        st.session_state.state = graph_response["state"]
+                        st.session_state.stage = const.DEPLOYMENT
+                        
+                with col2:
+                    if  st.button("✍️ Fix testing issues"):
+                        st.info("🔄 Sending feedback to revise code.")
+                        graph_response = graph_executor.graph_review_flow(
+                            st.session_state.task_id, status="feedback", feedback=feedback_text.strip(),review_type=const.REVIEW_QA_TESTING
+                        )
+                        st.session_state.state = graph_response["state"]
+                        st.session_state.stage = const.CODE_GENERATION
+                        st.rerun()
+                    
+            else:
+                st.info("QA Testing Report generation pending or not reached yet.")
+                
+        # ---------------- Tab 7: Deployment ----------------
+        with tabs[6]:
+            st.header("Deployment")
+            if st.session_state.stage == const.DEPLOYMENT:
+                
+                graph_response = graph_executor.get_updated_state(st.session_state.task_id)
+                st.session_state.state = graph_response["state"]
+                
+                if "deployment_feedback" in st.session_state.state:
+                    deployment_feedback = st.session_state.state["deployment_feedback"]        
+                    st.markdown(deployment_feedback)
+                                
+            else:
+                st.info("Deplopment verification pending or not reached yet.")
 
     except Exception as e:
         raise ValueError(f"Error occured with Exception : {e}")

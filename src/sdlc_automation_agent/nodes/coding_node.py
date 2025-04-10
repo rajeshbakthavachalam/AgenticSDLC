@@ -191,4 +191,89 @@ class CodingNode:
     
     ## ---- QA Testing ----- ##
     def qa_testing(self, state: SDLCState):
+        """
+            Performs QA testing based on the generated code and test cases
+        """
+        print("----- Performing QA Testing ----")
+        # Get the generated code and test cases from the state
+        code_generated = state.get('code_generated', '')
+        test_cases = state.get('test_cases', '')
+
+        # Create a prompt for the LLM to simulate running the test cases
+        prompt = f"""
+            You are a QA testing expert. Based on the following Python code and test cases, simulate running the test cases and provide feedback:
+            
+            ### Code:
+            ```
+            {code_generated}
+            ```
+
+            ### Test Cases:
+            ```
+            {test_cases}
+            ```
+
+            Focus on:
+            1. Identifying which test cases pass and which fail.
+            2. Providing detailed feedback for any failed test cases, including the reason for failure.
+            3. Suggesting improvements to the code or test cases if necessary.
+
+            Provide the results in the following format:
+            - Test Case ID: [ID]
+            Status: [Pass/Fail]
+            Feedback: [Detailed feedback if failed]
+        """
+
+        # Invoke the LLM to simulate QA testing
+        response = self.llm.invoke(prompt)
+        qa_testing_comments = response.content
+
+        state["qa_testing_comments"]= qa_testing_comments
+        return state
+    
+    def qa_review(self, state: SDLCState):
         pass
+    
+    def deployment(self, state: SDLCState):
+        """
+            Performs the deployment
+        """
+        print("----- Generating Deployment Simulation----")
+
+        code_generated = state.get('code_generated', '')
+
+        # Create a prompt for the LLM to simulate deployment
+        prompt = f"""
+            You are a DevOps expert. Based on the following Python code, simulate the deployment process and provide feedback:
+            
+            ### Code:
+            ```
+            {code_generated}
+            ```
+
+            Focus on:
+            1. Identifying potential deployment issues (e.g., missing dependencies, configuration errors).
+            2. Providing recommendations to resolve any issues.
+            3. Confirming whether the deployment is successful or needs further action.
+
+            Provide the results in the following format:
+            - Deployment Status: [Success/Failed]
+            - Feedback: [Detailed feedback on the deployment process]
+        """
+
+        # Invoke the LLM to simulate deployment
+        response = self.llm.invoke(prompt)
+        deployment_feedback = response.content
+
+         # Determine the deployment status based on the feedback
+        if "SUCCESS" in deployment_feedback.upper():
+            deployment_status = "success"
+        else:
+            deployment_status = "failed"
+
+        # Update the state with the deployment results
+        return {
+            **state,
+            "deployment_status": deployment_status,
+            "deployment_feedback": deployment_feedback
+        }

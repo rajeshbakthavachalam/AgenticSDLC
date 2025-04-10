@@ -64,7 +64,11 @@ class GraphExecutor:
             elif review_type == const.REVIEW_TEST_CASES:
                 saved_state['test_case_review_status'] = status
                 saved_state['test_case_review_feedback'] = feedback
-                node_name = "review_test_cases"    
+                node_name = "review_test_cases" 
+            elif review_type == const.REVIEW_QA_TESTING:
+                saved_state['qa_testing_status'] = status
+                saved_state['qa_testing_feedback'] = feedback
+                node_name = "qa_review"   
             else:
                 raise ValueError(f"Unsupported review type: {review_type}")
             

@@ -1,9 +1,10 @@
-from langgraph.graph import StateGraph,START, END, MessagesState
-from src.sdlc_automation_agent.state.sdlc_state import SDLCState, UserStories
+from langgraph.graph import StateGraph,START, END
+from src.sdlc_automation_agent.state.sdlc_state import SDLCState
 from src.sdlc_automation_agent.nodes.project_requirement_node import ProjectRequirementNode
 from src.sdlc_automation_agent.nodes.design_document_node import DesingDocumentNode
 from src.sdlc_automation_agent.nodes.coding_node import CodingNode
 from langgraph.checkpoint.memory import MemorySaver
+from langchain_core.runnables.graph import MermaidDrawMethod
 
 class GraphBuilder:
     
@@ -47,6 +48,8 @@ class GraphBuilder:
         self.graph_builder.add_node("revise_test_cases", self.coding_node.revise_test_cases)
         
         self.graph_builder.add_node("qa_testing", self.coding_node.qa_testing)
+        self.graph_builder.add_node("qa_review", self.coding_node.qa_review)
+        self.graph_builder.add_node("deployment", self.coding_node.deployment)
         
         
         ## Edges
@@ -103,48 +106,61 @@ class GraphBuilder:
             }
         )
         self.graph_builder.add_edge("revise_test_cases", "write_test_cases")
-        self.graph_builder.add_edge("qa_testing", END)
+        self.graph_builder.add_edge("qa_testing", "qa_review")
+        self.graph_builder.add_conditional_edges(
+            "qa_review",
+            self.coding_node.review_test_cases_router,
+            {
+                "approved": "deployment",
+                "feedback": "generate_code"
+            }
+        )
+        self.graph_builder.add_edge("deployment", END)
          
         
-    def setup_graph(self):
-        """
-        Sets up the graph
-        """
-        self.build_sdlc_graph()
-        return self.graph_builder.compile(
-            interrupt_before=[
-                'get_user_requirements',
-                'review_user_stories',
-                'review_design_documents',
-                'code_review',
-                'security_review',
-                'review_test_cases'
-            ],checkpointer=self.memory
-        )
-        
-             
     # def setup_graph(self):
     #     """
     #     Sets up the graph
     #     """
     #     self.build_sdlc_graph()
-    #     graph =self.graph_builder.compile(
+    #     return self.graph_builder.compile(
     #         interrupt_before=[
     #             'get_user_requirements',
     #             'review_user_stories',
     #             'review_design_documents',
     #             'code_review',
     #             'security_review',
-    #             'review_test_cases'
+    #             'review_test_cases',
+    #             'qa_review'
     #         ],checkpointer=self.memory
     #     )
-    #     self.save_graph_image(graph)         
-    #     return graph
+        
+             
+    def setup_graph(self):
+        """
+        Sets up the graph
+        """
+        self.build_sdlc_graph()
+        graph =self.graph_builder.compile(
+            interrupt_before=[
+                'get_user_requirements',
+                'review_user_stories',
+                'review_design_documents',
+                'code_review',
+                'security_review',
+                'review_test_cases',
+                'qa_review'
+            ],checkpointer=self.memory
+        )
+        self.save_graph_image(graph)         
+        return graph
     
     
     def save_graph_image(self,graph):
         # Generate the PNG image
-        img_data = graph.get_graph().draw_mermaid_png()
+        img_data = graph.get_graph().draw_mermaid_png(
+            draw_method=MermaidDrawMethod.API
+            )
 
         # Save the image to a file
         graph_path = "workflow_graph.png"
