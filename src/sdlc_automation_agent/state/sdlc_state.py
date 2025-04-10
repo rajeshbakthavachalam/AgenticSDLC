@@ -46,6 +46,7 @@ class SDLCState(TypedDict):
     qa_testing_feedback: str
     deployment_status: str
     deployment_feedback: str
+    artifacts: dict[str, str]
     
     
     

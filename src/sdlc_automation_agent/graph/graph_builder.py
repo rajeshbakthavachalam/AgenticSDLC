@@ -3,6 +3,7 @@ from src.sdlc_automation_agent.state.sdlc_state import SDLCState
 from src.sdlc_automation_agent.nodes.project_requirement_node import ProjectRequirementNode
 from src.sdlc_automation_agent.nodes.design_document_node import DesingDocumentNode
 from src.sdlc_automation_agent.nodes.coding_node import CodingNode
+from src.sdlc_automation_agent.nodes.markdown_node import MarkdownArtifactsNode
 from langgraph.checkpoint.memory import MemorySaver
 from langchain_core.runnables.graph import MermaidDrawMethod
 
@@ -22,6 +23,7 @@ class GraphBuilder:
         self.project_requirement_node = ProjectRequirementNode(self.llm)
         self.design_document_node = DesingDocumentNode(self.llm)
         self.coding_node = CodingNode(self.llm)
+        self.markdown_node = MarkdownArtifactsNode()
         
         ## Nodes
         self.graph_builder.add_node("initialize_project", self.project_requirement_node.initialize_project)
@@ -50,6 +52,7 @@ class GraphBuilder:
         self.graph_builder.add_node("qa_testing", self.coding_node.qa_testing)
         self.graph_builder.add_node("qa_review", self.coding_node.qa_review)
         self.graph_builder.add_node("deployment", self.coding_node.deployment)
+        self.graph_builder.add_node("donwload_artifacts", self.markdown_node.generate_markdown_artifacts)
         
         
         ## Edges
@@ -115,7 +118,8 @@ class GraphBuilder:
                 "feedback": "generate_code"
             }
         )
-        self.graph_builder.add_edge("deployment", END)
+        self.graph_builder.add_edge("deployment", "donwload_artifacts")
+        self.graph_builder.add_edge("donwload_artifacts", END)
          
         
     # def setup_graph(self):

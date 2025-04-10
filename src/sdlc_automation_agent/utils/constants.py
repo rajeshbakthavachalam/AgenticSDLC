@@ -8,6 +8,7 @@ SECURITY_REVIEW = "security_review"
 WRITE_TEST_CASES = "write_test_cases"
 QA_TESTING = "qa_testing"
 DEPLOYMENT = "deployment"
+ARTIFACTS = "artifacts"
 
 REVIEW_USER_STORIES = "review_user_stories"
 REVIEW_DESIGN_DOCUMENTS = "review_design_documents"

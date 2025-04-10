@@ -125,7 +125,7 @@ def load_app():
             return
 
         # Create tabs for different stages
-        tabs = st.tabs(["Project Requirement", "User Stories", "Design Documents", "Code Generation", "Test Cases", "QA Testing", "Deployment"])
+        tabs = st.tabs(["Project Requirement", "User Stories", "Design Documents", "Code Generation", "Test Cases", "QA Testing", "Deployment", "Download Artifacts"])
 
         # ---------------- Tab 1: Project Requirement ----------------
         with tabs[0]:
@@ -424,9 +424,33 @@ def load_app():
                 if "deployment_feedback" in st.session_state.state:
                     deployment_feedback = st.session_state.state["deployment_feedback"]        
                     st.markdown(deployment_feedback)
+                    st.session_state.stage = const.ARTIFACTS
                                 
             else:
                 st.info("Deplopment verification pending or not reached yet.")
+                
+        # ---------------- Tab 8: Artifacts ----------------
+        with tabs[7]:
+            st.header("Artifacts")
+            if "artifacts" in st.session_state.state and st.session_state.state["artifacts"]:
+                st.subheader("Download Artifacts")
+                for artifact_name, artifact_path in st.session_state.state["artifacts"].items():
+                    if artifact_path:
+                        try:
+                            with open(artifact_path, "rb") as f:
+                                file_bytes = f.read()
+                            st.download_button(
+                                label=f"Download {artifact_name}",
+                                data=file_bytes,
+                                file_name=os.path.basename(artifact_path),
+                                mime="application/octet-stream"
+                            )
+                        except Exception as e:
+                            st.error(f"Error reading {artifact_name}: {e}")
+                    else:
+                        st.info(f"{artifact_name} not available.")
+            else:
+                st.info("No artifacts generated yet.")
 
     except Exception as e:
         raise ValueError(f"Error occured with Exception : {e}")
