@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import TypedDict, Any, Dict, Literal, Optional
 import json
-import src.sdlc_automation_agent.utils.constants as const
+import src.dev_pilot.utils.constants as const
 
     
 class UserStories(BaseModel):

@@ -1,18 +1,19 @@
 import redis
 import json
 from typing import Optional
-from src.sdlc_automation_agent.state.sdlc_state import CustomEncoder, SDLCState
+from src.dev_pilot.state.sdlc_state import CustomEncoder, SDLCState
 from upstash_redis import Redis
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
-REDIS_URL = os.getenv("REDIS_URL")
-REDIS_TOKEN = os.getenv("REDIS_TOKEN")
+
 
 # Initialize Redis client
 
 ## Upstash Redis Client Configuraion
+# REDIS_URL = os.getenv("REDIS_URL")
+# REDIS_TOKEN = os.getenv("REDIS_TOKEN")
 # redis_client = redis = Redis(url=REDIS_URL, token=REDIS_TOKEN)
 
 ## For testing locally with docker

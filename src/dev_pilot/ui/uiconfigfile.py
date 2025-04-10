@@ -1,7 +1,7 @@
 from configparser import ConfigParser
 
 class Config:
-    def __init__(self,config_file="src/sdlc_automation_agent/ui/uiconfigfile.ini"):
+    def __init__(self,config_file="src/dev_pilot/ui/uiconfigfile.ini"):
         self.config=ConfigParser()
         self.config.read(config_file)
 

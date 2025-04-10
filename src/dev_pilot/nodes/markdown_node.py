@@ -1,6 +1,6 @@
 import os
-from src.sdlc_automation_agent.state.sdlc_state import SDLCState
-from src.sdlc_automation_agent.utils.Utility import Utility
+from src.dev_pilot.state.sdlc_state import SDLCState
+from src.dev_pilot.utils.Utility import Utility
 
 class MarkdownArtifactsNode:
     """

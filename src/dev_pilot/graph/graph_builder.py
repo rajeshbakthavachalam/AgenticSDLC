@@ -1,9 +1,9 @@
 from langgraph.graph import StateGraph,START, END
-from src.sdlc_automation_agent.state.sdlc_state import SDLCState
-from src.sdlc_automation_agent.nodes.project_requirement_node import ProjectRequirementNode
-from src.sdlc_automation_agent.nodes.design_document_node import DesingDocumentNode
-from src.sdlc_automation_agent.nodes.coding_node import CodingNode
-from src.sdlc_automation_agent.nodes.markdown_node import MarkdownArtifactsNode
+from src.dev_pilot.state.sdlc_state import SDLCState
+from src.dev_pilot.nodes.project_requirement_node import ProjectRequirementNode
+from src.dev_pilot.nodes.design_document_node import DesingDocumentNode
+from src.dev_pilot.nodes.coding_node import CodingNode
+from src.dev_pilot.nodes.markdown_node import MarkdownArtifactsNode
 from langgraph.checkpoint.memory import MemorySaver
 from langchain_core.runnables.graph import MermaidDrawMethod
 
