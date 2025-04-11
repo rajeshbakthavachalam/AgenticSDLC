@@ -1,30 +1,41 @@
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 import os
 from dotenv import load_dotenv
 from functools import lru_cache
 from src.dev_pilot.LLMS.groqllm import GroqLLM
 from src.dev_pilot.LLMS.geminillm import GeminiLLM
 from src.dev_pilot.graph.graph_builder import GraphBuilder
+from src.dev_pilot.graph.graph_executor import GraphExecutor
+from src.dev_pilot.dto.sdlc_request import SDLCRequest
+from src.dev_pilot.dto.sdlc_response import SDLCResponse
 import uvicorn
 from contextlib import asynccontextmanager
 
+gemini_models = [
+    "gemini-2.0-flash",
+    "gemini-2.0-flash-lite", 
+    "gemini-2.5-pro-exp-03-25"
+]
 
+groq_models = [
+    "gemma2-9b-it",
+    "llama3-8b-8192",
+    "llama3-70b-8192"
+]
 
 def load_app():
      uvicorn.run(app, host="0.0.0.0", port=8000)
 
-
 class Settings:
     def __init__(self):
         self.GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-        self.GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-        
+        self.GROQ_API_KEY = os.getenv("GROQ_API_KEY")        
 
 @lru_cache()
 def get_settings():
     return Settings()
-
 
 def validate_api_keys(settings: Settings = Depends(get_settings)):
     required_keys = {
@@ -40,24 +51,29 @@ def validate_api_keys(settings: Settings = Depends(get_settings)):
         )
     return settings
 
+
 # Initialize the LLM and GraphBuilder instances once and store them in the app state
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    get_settings()
-    llm = GeminiLLM().get_llm()
+    settings = get_settings()
+    llm = GeminiLLM(model=gemini_models[0], api_key=settings.GEMINI_API_KEY).get_llm_model()
     graph_builder = GraphBuilder(llm=llm)
     graph = graph_builder.setup_graph()
+    graph_executor = GraphExecutor(graph)
     app.state.llm = llm
     app.state.graph = graph
+    app.state.graph_executor = graph_executor
     yield
     # Clean up resources if needed
     app.state.llm = None
     app.state.graph = None
+    app.state.graph_executor = None
 
 app = FastAPI(
     title="DevPilot API",
     description="AI-powered SDLC API using Langgraph",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # Configure CORS
@@ -76,3 +92,34 @@ async def root():
         "docs_url": "/docs",
         "redoc_url": "/redoc"
     }
+
+@app.post("/api/v1/sdlc/start", response_model=SDLCResponse)
+async def start_sdlc(
+    sdlc_request: SDLCRequest,
+    settings: Settings = Depends(validate_api_keys)
+    ):
+
+    try:
+        graph_executor = app.state.graph_executor
+        
+        if isinstance (graph_executor, GraphExecutor) == False:
+            raise Exception("Graph Executor not initialized")
+        
+        graph_response = graph_executor.start_workflow(sdlc_request.project_name)
+        
+        print(f"Start Workflow Response: {graph_response}")
+        
+        return SDLCResponse(
+            status="success",
+            message="SDLC process started successfully",
+            task_id=graph_response["task_id"],
+            state=graph_response["event"]
+        )
+    
+    except Exception as e:
+        error_response = SDLCResponse(
+            status="error",
+            message="Failed to start the process",
+            error=str(e)
+        )
+        return JSONResponse(status_code=500, content=error_response.model_dump())

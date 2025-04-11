@@ -29,7 +29,7 @@ class GraphExecutor:
         
         save_state_to_redis(task_id, current_state)
         
-        return {"task_id" : task_id, "state": current_state}
+        return {"task_id" : task_id, "state": current_state, "event": event}
     
     ## ------- User Story Generation ------- ##
     def generate_stories(self, task_id:str, requirements: list[str]):

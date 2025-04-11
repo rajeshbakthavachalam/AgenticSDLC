@@ -4,17 +4,20 @@ from langchain_openai import ChatOpenAI
 
 
 class OpenAILLM:
-    def __init__(self, user_controls_input):
+    def __init__(self, user_controls_input=None, model=None):
         self.user_controls_input = user_controls_input
+        self.model = model
         
         
     def get_llm_model(self):
         try:
-            openai_api_key = self.user_controls_input['OPENAI_API_KEY']
-            selected_openai_model = self.user_controls_input['selected_openai_model']
-            
-            llm = ChatOpenAI(api_key=openai_api_key, model= selected_openai_model)
-        
+            if  self.user_controls_input:
+                openai_api_key = self.user_controls_input['OPENAI_API_KEY']
+                selected_openai_model = self.user_controls_input['selected_openai_model']
+                llm = ChatOpenAI(api_key=openai_api_key, model= selected_openai_model)
+            else:
+                llm = ChatOpenAI( model= self.model)
+
         except Exception as e:
             raise ValueError(f"Error occured with Exception : {e}")
         
