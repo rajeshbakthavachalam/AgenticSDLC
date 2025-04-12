@@ -22,14 +22,14 @@ class GraphExecutor:
         
         thread = self.get_thread(task_id)
         
+        state = None
         for event in graph.stream({"project_name": project_name},thread, stream_mode="values"):
-           print(f"Event Received: {event}")
+           state = event
         
         current_state = graph.get_state(thread)
-        
         save_state_to_redis(task_id, current_state)
         
-        return {"task_id" : task_id, "state": current_state, "event": event}
+        return {"task_id" : task_id, "state": state}
     
     ## ------- User Story Generation ------- ##
     def generate_stories(self, task_id:str, requirements: list[str]):
@@ -91,7 +91,7 @@ class GraphExecutor:
         current_state = graph.get_state(thread)
         save_state_to_redis(task_id, current_state)
         
-        return {"task_id" : task_id, "state": state,  "event": event}
+        return {"task_id" : task_id, "state": state}
 
 
     def get_updated_state(self, task_id):

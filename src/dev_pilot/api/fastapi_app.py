@@ -12,6 +12,11 @@ from src.dev_pilot.dto.sdlc_request import SDLCRequest
 from src.dev_pilot.dto.sdlc_response import SDLCResponse
 import uvicorn
 from contextlib import asynccontextmanager
+from src.dev_pilot.utils.logging_config import setup_logging
+from loguru import logger
+
+## Setup logging level
+setup_logging(log_level="DEBUG")
 
 gemini_models = [
     "gemini-2.0-flash",
@@ -76,6 +81,8 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+logger.info("Application starting up...")
+
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
@@ -107,13 +114,13 @@ async def start_sdlc(
         
         graph_response = graph_executor.start_workflow(sdlc_request.project_name)
         
-        print(f"Start Workflow Response: {graph_response}")
+        logger.debug(f"Start Workflow Response: {graph_response}")
         
         return SDLCResponse(
             status="success",
             message="SDLC process started successfully",
             task_id=graph_response["task_id"],
-            state=graph_response["event"]
+            state=graph_response["state"]
         )
     
     except Exception as e:
@@ -139,13 +146,13 @@ async def start_sdlc(
         
         graph_response = graph_executor.generate_stories(sdlc_request.task_id, sdlc_request.requirements)
         
-        print(f"Generate Stories Response: {graph_response}")
+        logger.debug(f"Generate Stories Response: {graph_response}")
         
         return SDLCResponse(
             status="success",
             message="User Stories generated successfully",
             task_id=graph_response["task_id"],
-            state=graph_response["event"]
+            state=graph_response["state"]
         )
     
     except Exception as e:
