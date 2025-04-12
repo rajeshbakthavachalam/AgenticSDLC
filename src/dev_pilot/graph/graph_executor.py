@@ -18,7 +18,7 @@ class GraphExecutor:
         flush_redis_cache()
         
         # Generate a unique task id
-        task_id = f"sdlc-task-{uuid.uuid4().hex[:8]}"
+        task_id = f"sdlc-session-{uuid.uuid4().hex[:8]}"
         
         thread = self.get_thread(task_id)
         
@@ -91,7 +91,7 @@ class GraphExecutor:
         current_state = graph.get_state(thread)
         save_state_to_redis(task_id, current_state)
         
-        return {"task_id" : task_id, "state": state}
+        return {"task_id" : task_id, "state": state,  "event": event}
 
 
     def get_updated_state(self, task_id):

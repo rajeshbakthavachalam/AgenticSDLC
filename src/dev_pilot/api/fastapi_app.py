@@ -123,3 +123,35 @@ async def start_sdlc(
             error=str(e)
         )
         return JSONResponse(status_code=500, content=error_response.model_dump())
+    
+    
+@app.post("/api/v1/sdlc/user_stories", response_model=SDLCResponse)
+async def start_sdlc(
+    sdlc_request: SDLCRequest,
+    settings: Settings = Depends(validate_api_keys)
+    ):
+
+    try:
+        graph_executor = app.state.graph_executor
+        
+        if isinstance (graph_executor, GraphExecutor) == False:
+            raise Exception("Graph Executor not initialized")
+        
+        graph_response = graph_executor.generate_stories(sdlc_request.task_id, sdlc_request.requirements)
+        
+        print(f"Generate Stories Response: {graph_response}")
+        
+        return SDLCResponse(
+            status="success",
+            message="User Stories generated successfully",
+            task_id=graph_response["task_id"],
+            state=graph_response["event"]
+        )
+    
+    except Exception as e:
+        error_response = SDLCResponse(
+            status="error",
+            message="Failed to generate user stories",
+            error=str(e)
+        )
+        return JSONResponse(status_code=500, content=error_response.model_dump())

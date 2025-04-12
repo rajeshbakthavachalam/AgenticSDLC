@@ -11,3 +11,6 @@ class SDLCRequest(BaseModel):
                                                          "Users should be able to do the payment",
                                                          "Users should be able to see their order history"],
                                                 description="The list of requirements for the project")
+    task_id: Optional[str] = Field(None, 
+                                    example="sdlc-session-5551defc",
+                                    description="The task id of the workflow session")
