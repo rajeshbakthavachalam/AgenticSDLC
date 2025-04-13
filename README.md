@@ -248,6 +248,7 @@ Content-Type: application/json
 - **Update Workflow Progress:**  
   With the task ID, update the workflow (for example, by approving or giving feedback on user stories). With each iteration pass the next node to proceed to and the status of the previous node. Status can be approved or feedback. Based on the status the next node will be determined. Once the workflow is completed it will return the end node, which indicates the completion of the SDLC process.
 
+- **Added Postman collection for reference.**
 
 ## Workflow Graph
 ![](workflow_graph.png)
