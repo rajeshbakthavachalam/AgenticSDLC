@@ -36,6 +36,7 @@ class GraphExecutor:
         saved_state = get_state_from_redis(task_id)
         if saved_state:
             saved_state['requirements'] = requirements
+            saved_state['next_node'] = const.REVIEW_USER_STORIES
         
         return self.update_and_resume_graph(saved_state,task_id,"get_user_requirements")
 
@@ -49,26 +50,38 @@ class GraphExecutor:
                 saved_state['user_stories_review_status'] = status
                 saved_state['user_stories_feedback'] = feedback
                 node_name = "review_user_stories"
+                saved_state['next_node'] = const.REVIEW_USER_STORIES if status == "feedback" else const.REVIEW_DESIGN_DOCUMENTS
+                
             elif review_type == const.REVIEW_DESIGN_DOCUMENTS:
                 saved_state['design_documents_review_status'] = status
                 saved_state['design_documents_feedback'] = feedback
                 node_name = "review_design_documents"
+                saved_state['next_node'] = const.REVIEW_DESIGN_DOCUMENTS if status == "feedback" else const.REVIEW_CODE
+                
             elif review_type == const.REVIEW_CODE:
                 saved_state['code_review_status'] = status
                 saved_state['code_review_feedback'] = feedback
                 node_name = "code_review"
+                saved_state['next_node'] = const.REVIEW_CODE if status == "feedback" else const.REVIEW_SECURITY_RECOMMENDATIONS
+                
             elif review_type == const.REVIEW_SECURITY_RECOMMENDATIONS:
                 saved_state['security_review_status'] = status
                 saved_state['security_review_comments'] = feedback
                 node_name = "security_review"   
+                saved_state['next_node'] = const.REVIEW_SECURITY_RECOMMENDATIONS if status == "feedback" else const.REVIEW_TEST_CASES
+                
             elif review_type == const.REVIEW_TEST_CASES:
                 saved_state['test_case_review_status'] = status
                 saved_state['test_case_review_feedback'] = feedback
                 node_name = "review_test_cases" 
+                saved_state['next_node'] = const.REVIEW_TEST_CASES if status == "feedback" else const.REVIEW_QA_TESTING
+                 
             elif review_type == const.REVIEW_QA_TESTING:
                 saved_state['qa_testing_status'] = status
                 saved_state['qa_testing_feedback'] = feedback
-                node_name = "qa_review"   
+                node_name = "qa_review"  
+                saved_state['next_node'] = const.REVIEW_QA_TESTING if status == "feedback" else const.END_NODE
+                 
             else:
                 raise ValueError(f"Unsupported review type: {review_type}")
             

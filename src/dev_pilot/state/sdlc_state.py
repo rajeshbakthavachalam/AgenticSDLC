@@ -23,6 +23,7 @@ class SDLCState(TypedDict):
     Represents the structure of the state used in the SDLC graph
 
     """    
+    next_node: str = const.PROJECT_INITILIZATION
     project_name: str
     requirements: list[str]
     user_stories: UserStoryList

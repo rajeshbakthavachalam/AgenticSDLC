@@ -162,3 +162,41 @@ async def start_sdlc(
             error=str(e)
         )
         return JSONResponse(status_code=500, content=error_response.model_dump())
+    
+
+@app.post("/api/v1/sdlc/progress_flow", response_model=SDLCResponse)
+async def progress_sdlc(
+    sdlc_request: SDLCRequest,
+    settings: Settings = Depends(validate_api_keys)
+    ):
+
+    try:
+
+        graph_executor = app.state.graph_executor
+        
+        if isinstance (graph_executor, GraphExecutor) == False:
+            raise Exception("Graph Executor not initialized")
+        
+        graph_response = graph_executor.graph_review_flow(
+            sdlc_request.task_id, 
+            sdlc_request.status, 
+            sdlc_request.feedback,
+            sdlc_request.next_node)
+        
+        logger.debug(f"Flow Node: {sdlc_request.next_node}")
+        logger.debug(f"Progress Flow Response: {graph_response}")
+        
+        return SDLCResponse(
+            status="success",
+            message="Flow progressed successfully to next step",
+            task_id=graph_response["task_id"],
+            state=graph_response["state"]
+        )
+    
+    except Exception as e:
+        error_response = SDLCResponse(
+            status="error",
+            message="Failed to progress the flow",
+            error=str(e)
+        )
+        return JSONResponse(status_code=500, content=error_response.model_dump())
