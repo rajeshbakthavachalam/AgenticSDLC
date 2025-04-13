@@ -9,7 +9,6 @@ from src.dev_pilot.graph.graph_executor import GraphExecutor
 from src.dev_pilot.state.sdlc_state import UserStoryList
 import os
 
-
 def initialize_session():
     st.session_state.stage = const.PROJECT_INITILIZATION
     st.session_state.project_name = ""
@@ -456,3 +455,7 @@ def load_app():
 
     except Exception as e:
         raise ValueError(f"Error occured with Exception : {e}")
+    
+    
+## Starting the App
+load_app()

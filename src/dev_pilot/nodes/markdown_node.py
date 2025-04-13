@@ -1,6 +1,7 @@
 import os
 from src.dev_pilot.state.sdlc_state import SDLCState
 from src.dev_pilot.utils.Utility import Utility
+from loguru import logger
 
 class MarkdownArtifactsNode:
     """
@@ -119,5 +120,5 @@ class MarkdownArtifactsNode:
             "QA_Testing_Comments": file_qa,
             "Deployment_Feedback": file_deployment
         }
-        print("Markdown artifacts generated in folder:", artifacts_dir)
+        logger.info("Markdown artifacts generated in folder:", artifacts_dir)
         return state

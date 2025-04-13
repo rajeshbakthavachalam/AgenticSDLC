@@ -1,5 +1,6 @@
 from src.dev_pilot.state.sdlc_state import SDLCState, DesignDocument
 from src.dev_pilot.utils.Utility import Utility
+from loguru import logger
 
 class DesingDocumentNode:
     """
@@ -15,7 +16,7 @@ class DesingDocumentNode:
         """
         Generates the Design document functional and technical
         """
-        print("----- Creating Design Document ----")
+        logger.info("----- Creating Design Document ----")
         requirements = state.get('requirements', '')
         user_stories = state.get('user_stories', '')
         project_name = state.get('project_name', '')
@@ -53,7 +54,7 @@ class DesingDocumentNode:
         """
         Helper method to generate functional design document
         """
-        print("----- Creating Functional Design Document ----")
+        logger.info("----- Creating Functional Design Document ----")
         prompt = f"""
             Create a comprehensive functional design document for {project_name} in Markdown format.
     
@@ -93,7 +94,7 @@ class DesingDocumentNode:
             """
                 Helper method to generate technical design document in Markdown format
             """
-            print("----- Creating Technical Design Document ----")
+            logger.info("----- Creating Technical Design Document ----")
             prompt = f"""
                 Create a comprehensive technical design document for {project_name} in Markdown format.
                 

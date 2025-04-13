@@ -5,6 +5,7 @@ from src.dev_pilot.state.sdlc_state import CustomEncoder, SDLCState
 from upstash_redis import Redis
 import os
 from dotenv import load_dotenv
+from loguru import logger
 
 load_dotenv()
 
@@ -50,4 +51,4 @@ def flush_redis_cache():
     # Clear all keys in all databases
     redis_client.flushall()
 
-    print("--- Redis cache cleared ---")
+    logger.info("--- Redis cache cleared ---")

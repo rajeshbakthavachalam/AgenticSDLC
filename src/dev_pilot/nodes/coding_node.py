@@ -1,5 +1,6 @@
 from src.dev_pilot.state.sdlc_state import SDLCState, UserStoryList
 from src.dev_pilot.utils.Utility import Utility
+from loguru import logger
 
 class CodingNode:
     """
@@ -16,7 +17,7 @@ class CodingNode:
         """
             Generates the code for the given SDLC state as multiple Python files.
         """
-        print("----- Generating the code ----")
+        logger.info("----- Generating the code ----")
         
         requirements = state.get('requirements', '')
         user_stories = state.get('user_stories', '')
@@ -65,7 +66,7 @@ class CodingNode:
         """
         Generate code review comments for the provided code
         """
-        print("----- Generating code review comments ----")
+        logger.info("----- Generating code review comments ----")
         
         # Create a prompt for the LLM to review the code
         prompt = f"""
@@ -104,7 +105,7 @@ class CodingNode:
         """
             Performs security review of the code generated
         """
-        print("----- Generating security recommendations ----")
+        logger.info("----- Generating security recommendations ----")
           
          # Get the generated code from the state
         code_generated = state.get('code_generated', '')
@@ -145,7 +146,7 @@ class CodingNode:
         """
             Generates the test cases based on the generated code and code review comments
         """
-        print("----- Generating Test Cases ----")
+        logger.info("----- Generating Test Cases ----")
     
         # Get the generated code and code review comments from the state
         code_generated = state.get('code_generated', '')
@@ -194,7 +195,7 @@ class CodingNode:
         """
             Performs QA testing based on the generated code and test cases
         """
-        print("----- Performing QA Testing ----")
+        logger.info("----- Performing QA Testing ----")
         # Get the generated code and test cases from the state
         code_generated = state.get('code_generated', '')
         test_cases = state.get('test_cases', '')
@@ -238,7 +239,7 @@ class CodingNode:
         """
             Performs the deployment
         """
-        print("----- Generating Deployment Simulation----")
+        logger.info("----- Generating Deployment Simulation----")
 
         code_generated = state.get('code_generated', '')
 

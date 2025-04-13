@@ -2,6 +2,7 @@ from src.dev_pilot.state.sdlc_state import SDLCState
 from src.dev_pilot.cache.redis_cache import flush_redis_cache, save_state_to_redis, get_state_from_redis
 import uuid
 import src.dev_pilot.utils.constants as const
+from loguru import logger
 
 class GraphExecutor:
     def __init__(self, graph):
@@ -97,7 +98,7 @@ class GraphExecutor:
          # Resume the graph
         state = None
         for event in graph.stream(None, thread, stream_mode="values"):
-            print(f"Event Received: {event}")
+            logger.debug(f"Event Received: {event}")
             state = event
         
         # saving the state before asking the product owner for review
