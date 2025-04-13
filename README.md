@@ -28,6 +28,7 @@ DevPilot/
 ├── src/
 │   └── dev_pilot/
 │       ├── cache/          # Redis cache and state persistence
+│       ├── api/            # Fast API integration logic
 │       ├── graph/          # Graph builder and related logic
 │       ├── LLMS/           # LLM integrations (Gemini, Groq, OpenAI, etc.)
 │       ├── nodes/          # Individual nodes handling each SDLC phase (requirements, coding, etc.)
@@ -44,18 +45,27 @@ DevPilot/
 ```
 
 ## Setup Instruction
+There are 2 entry point in the application: 1. FastAPI 2. Streamlit UI. Depending on the input passed through the command line, the application will be launched in the respective mode.
 - Clone the repo
 - Create a virtual environment
 - Install the requirements
 - Install Docker Desktop
 - Pull the Redis image using `docker pull redis`
 - Run the Redis container using `docker run -p 6379:6379 redis` (Docker is used to store the state of the graph in Redis)
-- Run the streamlit app using `streamlit run app.py`
+- Run the streamlit app using `python app.py --mode streamlit`
+- Run the FastAPI app using `python app.py --mode fastapi`
+
+Make sure to setup the environment variables in the .env file before running the application for the respective LLMs key.
+
+If you don't want to use the redis locally through docker then flow below steps:
+- Inside `src/dev_pilot/cache/redis_cache.py` comment the docker redis client and uncomment the upstash redis client.
+- Set the url and token in the .env file.
 
 
 ## Workflow Graph
 ![](workflow_graph.png)
 
+
+
 ### TODO
-- Fast API Integration
-- Deploy as a docker on AWS
+- Containerize the application using Docker
