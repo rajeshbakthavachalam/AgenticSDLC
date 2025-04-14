@@ -253,3 +253,7 @@ Content-Type: application/json
 ## Workflow Graph
 ![](workflow_graph.png)
 
+<video width="640" controls>
+  <source src="workflow_video.mov" type="video/mov">
+  Your browser does not support the video tag.
+</video>
