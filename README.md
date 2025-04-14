@@ -52,8 +52,8 @@ There are 2 entry point in the application: 1. FastAPI 2. Streamlit UI. Dependin
 - Install Docker Desktop
 - Pull the Redis image using `docker pull redis`
 - Run the Redis container using `docker run -p 6379:6379 redis` (Docker is used to store the state of the graph in Redis)
-- Run the streamlit app using `python app.py --mode streamlit`
-- Run the FastAPI app using `python app.py --mode fastapi`
+- Run the streamlit app using `streamlit run app_streamlit.py`
+- Run the FastAPI app using `python app_api.py`
 
 Make sure to setup the environment variables in the .env file before running the application for the respective LLMs key.
 
@@ -253,7 +253,3 @@ Content-Type: application/json
 ## Workflow Graph
 ![](workflow_graph.png)
 
-
-
-### TODO
-- Containerize the application using Docker

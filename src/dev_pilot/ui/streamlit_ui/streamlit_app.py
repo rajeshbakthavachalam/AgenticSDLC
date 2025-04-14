@@ -456,6 +456,3 @@ def load_app():
     except Exception as e:
         raise ValueError(f"Error occured with Exception : {e}")
     
-    
-## Starting the App
-load_app()
