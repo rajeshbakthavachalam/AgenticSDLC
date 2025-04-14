@@ -13,10 +13,7 @@ jobs:
           fetch-depth: 0
           lfs: true
 
-      - name: Push LFS files
-        run: git lfs push --all origin main
-
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: git push --force https://msaifee:$HF_TOKEN@huggingface.co/spaces/msaifee/DevPilot main
+        run: git lfs push --force https://msaifee:$HF_TOKEN@huggingface.co/spaces/msaifee/DevPilot main
