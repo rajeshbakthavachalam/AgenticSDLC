@@ -2,6 +2,20 @@
 
 ## _Pilot your entire software lifecycle from idea to release_
 
+## For Hugging Face Space
+---
+title: DevPilot
+emoji: 😻
+colorFrom: red
+colorTo: purple
+sdk: streamlit
+sdk_version: 1.44.1
+app_file: app.py
+pinned: false
+license: mit
+short_description: Pilot your entire software lifecycle from idea to release
+---
+
 ## Overview
 DevPilot is an end-to-end solution designed to automate your entire software development lifecycle. This project leverages a modular, graph-based architecture to transform user requirements into a fully deployed solution. It handles everything from collecting user requirements and generating user stories to creating design documents, code generation, security and test reviews, and deployment. In addition, Markdown artifacts for each phase are automatically generated and made available for download.
 

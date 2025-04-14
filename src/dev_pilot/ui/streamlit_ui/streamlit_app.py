@@ -62,7 +62,7 @@ def load_sidebar_ui(config):
                                                                                                     value=os.getenv("OPENAI_API_KEY", "")) 
             # Validate API key
             if not user_controls["OPENAI_API_KEY"]:
-                st.warning("⚠️ Please enter your OPENAI API key to proceed. Don't have? refer : https://ai.google.dev/gemini-api/docs/api-key ")
+                st.warning("⚠️ Please enter your OPENAI API key to proceed. Don't have? refer : https://platform.openai.com/api-keys ")
     
         if st.button("Reset Session"):
             for key in list(st.session_state.keys()):
