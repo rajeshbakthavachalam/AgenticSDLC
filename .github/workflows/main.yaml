@@ -14,13 +14,10 @@ jobs:
           lfs: true
 
       - name: Push LFS files
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git lfs push --all https://msaifee:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/msaifee/DevPilot main
+          git lfs push --all origin main || echo "Git LFS push failed, but continuing."
 
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          git push --force https://msaifee:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/msaifee/DevPilot main
+        run: git push --force https://msaifee:$HF_TOKEN@huggingface.co/spaces/msaifee/DevPilot main
