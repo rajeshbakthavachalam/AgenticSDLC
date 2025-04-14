@@ -254,4 +254,4 @@ Content-Type: application/json
 ![](workflow_graph.png)
 
 ## Workflow Video
-[![Watch the video](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://youtu.be/8BTiXXZK8Jc)
+[Watch the video](https://youtu.be/SfYjKJzl1I8)
