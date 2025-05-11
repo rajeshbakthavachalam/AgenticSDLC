@@ -20,7 +20,7 @@ def setup_logging(log_level: str = "INFO"):
 
     # File handler: logs to file with rotation, retention, and compression for production
     logger.add(
-        os.path.join(log_dir, "devpilot.log"),
+        os.path.join(log_dir, "agenticsdlc.log"),
         rotation="10 MB",     # Rotate after 10 MB
         retention="10 days",    # Keep logs for 10 days
         compression="zip",      # Compress archived logs

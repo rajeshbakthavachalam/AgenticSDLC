@@ -267,26 +267,32 @@ def load_app():
 
         # ---------------- Tab 4: Coding ----------------
         with tabs[3]:
-            st.header("Code Genearation")
+            st.header("Code Generation")
             if st.session_state.stage in [const.CODE_GENERATION, const.SECURITY_REVIEW]:
                 
                 graph_response = graph_executor.get_updated_state(st.session_state.task_id)
                 st.session_state.state = graph_response["state"]
                         
-                if "code_generated" in st.session_state.state:
+                # Only show security recommendations if in security review and not after implementation
+                show_security = (
+                    st.session_state.stage == const.SECURITY_REVIEW and
+                    "security_recommendations" in st.session_state.state and
+                    (not st.session_state.state.get("security_review_status") or st.session_state.state.get("security_review_status") == "feedback")
+                )
+
+                if "code_generated" in st.session_state.state and st.session_state.state["code_generated"]:
                     code_generated = st.session_state.state["code_generated"]        
                     st.subheader("Code Files")
                     st.markdown(code_generated)
                     st.divider()
-                    
-                if st.session_state.stage == const.CODE_GENERATION:  
-                        review_type = const.REVIEW_CODE
-                elif st.session_state.stage == const.SECURITY_REVIEW:
-                      if "security_recommendations" in st.session_state.state:
-                        security_recommendations = st.session_state.state["security_recommendations"]        
-                        st.subheader("Security Recommendations")
-                        st.markdown(security_recommendations)
-                        review_type = const.REVIEW_SECURITY_RECOMMENDATIONS
+
+                if show_security:
+                    security_recommendations = st.session_state.state["security_recommendations"]        
+                    st.subheader("Security Recommendations")
+                    st.markdown(security_recommendations)
+                    review_type = const.REVIEW_SECURITY_RECOMMENDATIONS
+                else:
+                    review_type = const.REVIEW_CODE
                 
                 # Code Review Stage.
                 st.divider()
@@ -298,32 +304,38 @@ def load_app():
                 col1, col2 = st.columns(2)
                 with col1:
                     if st.button("✅ Approve Code"):
+                        # Trigger code review first
                         graph_response = graph_executor.graph_review_flow(
                             st.session_state.task_id, status="approved", feedback=None, review_type=review_type
                         )
                         st.session_state.state = graph_response["state"]
-                        if st.session_state.stage == const.CODE_GENERATION:
+                        # If security review is required, set stage and show button for user to implement recommendations
+                        if st.session_state.stage == const.CODE_GENERATION or (
+                            "security_review_status" not in st.session_state.state and review_type == const.REVIEW_CODE
+                        ):
                             st.session_state.stage = const.SECURITY_REVIEW
                             st.rerun()
-                        elif st.session_state.stage == const.SECURITY_REVIEW:
+                        # If security review is already done, advance to test cases
+                        elif "code_generated" in st.session_state.state and st.session_state.state["code_generated"] and st.session_state.stage == const.SECURITY_REVIEW:
                             st.session_state.stage = const.WRITE_TEST_CASES
-                            
+                            st.rerun()
                 with col2:
                     if st.session_state.stage == const.SECURITY_REVIEW:
-                        if st.button("✍️ Implment Security Recommendations"):
-                            st.info("🔄 Sending feedback to revise code generation.")
+                        if st.button("✍️ Implement Security Recommendations"):
+                            st.info("🔄 Sending feedback to revise Code Generation.")
                             graph_response = graph_executor.graph_review_flow(
-                                st.session_state.task_id, status="feedback", feedback=None, review_type=review_type
+                                st.session_state.task_id, status="feedback", feedback=None, review_type=const.REVIEW_SECURITY_RECOMMENDATIONS
                             )
                             st.session_state.state = graph_response["state"]
-                            st.session_state.stage = const.CODE_GENERATION
+                            # After implementing security recommendations, allow user to approve and move to test cases
+                            st.session_state.stage = const.SECURITY_REVIEW
                             st.rerun()
                     else:
                         if st.button("✍️ Give Feedback"):
                             if not feedback_text.strip():
                                 st.warning("⚠️ Please enter feedback before submitting.")
                             else:
-                                st.info("🔄 Sending feedback to revise code generation.")
+                                st.info("🔄 Sending feedback to revise Code Generation.")
                                 graph_response = graph_executor.graph_review_flow(
                                     st.session_state.task_id, status="feedback", feedback=feedback_text.strip(),review_type=review_type
                                 )
@@ -332,7 +344,7 @@ def load_app():
                                 st.rerun()
                     
             else:
-                st.info("Code generation pending or not reached yet.")
+                st.info("Code Generation pending or not reached yet.")
                 
         # ---------------- Tab 5: Test Cases ----------------
         with tabs[4]:
@@ -403,7 +415,7 @@ def load_app():
                         
                 with col2:
                     if  st.button("✍️ Fix testing issues"):
-                        st.info("🔄 Sending feedback to revise code.")
+                        st.info("🔄 Sending feedback to revise Code Generation.")
                         graph_response = graph_executor.graph_review_flow(
                             st.session_state.task_id, status="feedback", feedback=feedback_text.strip(),review_type=const.REVIEW_QA_TESTING
                         )

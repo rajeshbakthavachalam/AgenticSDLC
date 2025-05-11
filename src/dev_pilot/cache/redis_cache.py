@@ -13,16 +13,16 @@ load_dotenv()
 # Initialize Redis client
 
 ## Upstash Redis Client Configuraion
-REDIS_URL = os.getenv("REDIS_URL")
-REDIS_TOKEN = os.getenv("REDIS_TOKEN")
-redis_client = redis = Redis(url=REDIS_URL, token=REDIS_TOKEN)
+# REDIS_URL = os.getenv("REDIS_URL")
+# REDIS_TOKEN = os.getenv("REDIS_TOKEN")
+# redis_client = redis = Redis(url=REDIS_URL, token=REDIS_TOKEN)
 
 ## For testing locally with docker
-# redis_client = redis.Redis(
-#     host='localhost',  # Replace with your Redis host
-#     port=6379,         # Replace with your Redis port
-#     db=0               # Replace with your Redis database number
-# )
+redis_client = redis.Redis(
+    host='localhost',  # Replace with your Redis host
+    port=6379,         # Replace with your Redis port
+    db=0               # Replace with your Redis database number
+)
 
 def save_state_to_redis(task_id: str, state: SDLCState):
     """Save the state to Redis."""

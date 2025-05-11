@@ -75,8 +75,8 @@ async def lifespan(app: FastAPI):
     app.state.graph_executor = None
 
 app = FastAPI(
-    title="DevPilot API",
-    description="AI-powered SDLC API using Langgraph",
+    title="AgenticSDLC API",
+    description="API for automating the software development lifecycle",
     version="1.0.0",
     lifespan=lifespan
 )
@@ -95,9 +95,9 @@ app.add_middleware(
 @app.get("/")
 async def root():
     return {
-        "message": "Welcome to DevPilot API",
-        "docs_url": "/docs",
-        "redoc_url": "/redoc"
+        "status": "success",
+        "message": "Welcome to AgenticSDLC API",
+        "version": "1.0.0"
     }
 
 @app.post("/api/v1/sdlc/start", response_model=SDLCResponse)

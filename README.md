@@ -7,6 +7,10 @@ AgenticSDLC is an end-to-end solution designed to automate your entire software 
 
 AgenticSDLC uses a state-driven graph (powered by [LangGraph](https://www.langchain.com/langgraph)) with conditional routing to manage the process. The project also integrates with Redis (optionally hosted externally) for caching and state persistence, and provides a visual workflow diagram of the entire process.
 
+## Repository
+
+This project is maintained by [rajeshbakthavachalam](https://github.com/rajeshbakthavachalam/AgenticSDLC)
+
 ## Features
 - **End-to-End SDLC Automation:** Automates every stage of the software development lifecycle—from project initialization to deployment.
 - **Graph-Based Orchestration:** Uses a state-driven graph with conditional routing to manage SDLC tasks.
@@ -252,6 +256,3 @@ Content-Type: application/json
 
 ## Workflow Graph
 ![](workflow_graph.png)
-
-## Workflow Video
-[Watch the video](https://youtu.be/SfYjKJzl1I8)"# AgenticSDLC" 
