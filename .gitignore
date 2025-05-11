@@ -174,3 +174,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+GEMINI_API_KEY=xxxxx
+GROQ_API_KEY=xxxxx
+OPENAI_API_KEY=xxxxx

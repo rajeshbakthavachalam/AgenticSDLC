@@ -1,31 +1,64 @@
-# AgenticSDLC
+# AgenticSDLC: WiFi7 Project SDLC Automation
 
-## _Pilot your entire software lifecycle from idea to release_
+## 🚀 Overview
+AgenticSDLC is an AI-powered, end-to-end solution designed to automate the entire Software Development Lifecycle (SDLC) for modern, complex projects. This example demonstrates how AgenticSDLC can be used to manage the SDLC for a **WiFi7 management platform**—from requirements gathering to deployment, with human-in-the-loop review and artifact generation at every step.
 
-## Overview
-AgenticSDLC is an end-to-end solution designed to automate your entire software development lifecycle. This project leverages a modular, graph-based architecture to transform user requirements into a fully deployed solution. It handles everything from collecting user requirements and generating user stories to creating design documents, code generation, security and test reviews, and deployment. In addition, Markdown artifacts for each phase are automatically generated and made available for download.
+## 🌐 Why WiFi7?
+WiFi7 is the next generation of wireless networking, enabling ultra-fast, low-latency, and highly reliable connectivity for smart homes, IoT, and enterprise environments. Building robust WiFi7 management software requires:
+- Advanced configuration and monitoring
+- Real-time performance analytics
+- Security and compliance
+- User-friendly interfaces for both admins and end-users
 
-AgenticSDLC uses a state-driven graph (powered by [LangGraph](https://www.langchain.com/langgraph)) with conditional routing to manage the process. The project also integrates with Redis (optionally hosted externally) for caching and state persistence, and provides a visual workflow diagram of the entire process.
+AgenticSDLC automates and orchestrates all these SDLC phases, ensuring rapid, secure, and high-quality delivery.
 
-## Repository
+---
 
-This project is maintained by [rajeshbakthavachalam](https://github.com/rajeshbakthavachalam/AgenticSDLC)
+## 🛠️ Key Features
+- **End-to-End SDLC Automation:** From requirements to deployment, all phases are orchestrated and documented.
+- **AI-Driven Artifacts:** Automatically generates user stories, design docs, code, security reviews, test cases, and more.
+- **Human-in-the-Loop:** Approve or provide feedback at every stage for maximum control and quality.
+- **Graph-Based Workflow:** Modular, state-driven process powered by LangGraph.
+- **LLM Integrations:** Supports OpenAI, Gemini, and Groq for code and artifact generation.
+- **Redis-Powered State:** Robust state management for multi-session, multi-user workflows.
+- **Modern UI & API:** Use Streamlit for interactive UI or FastAPI for programmatic access.
+- **Downloadable Artifacts:** Markdown docs for every SDLC phase.
 
-## Features
-- **End-to-End SDLC Automation:** Automates every stage of the software development lifecycle—from project initialization to deployment.
-- **Graph-Based Orchestration:** Uses a state-driven graph with conditional routing to manage SDLC tasks.
-- **Artifact Generation:** Automatically generates Markdown documentation for:
-  - Project Requirements
-  - User Stories
-  - Design Documents (Functional & Technical)
-  - Generated Code
-  - Security Recommendations
-  - Test Cases
-  - QA Testing Comments
-  - Deployment Feedback
-- **Interactive Review & Feedback:** Dynamic review cycles at multiple stages with options to approve or provide feedback with Humman-in-the-Loop.
+---
 
-## Project Structure
+## 🖼️ Example: WiFi7 Project SDLC Flow
+
+### 1. **Requirements Gathering**
+- "The system should support WiFi7 connectivity."
+- "Users should be able to configure WiFi7 settings."
+- "The system should monitor WiFi7 performance."
+- "Users should receive alerts for WiFi7 issues."
+
+### 2. **User Stories**
+- *Support WiFi7 Connectivity*: As a user, I want the system to support WiFi7 so I can benefit from the latest wireless technology.
+- *Configure WiFi7 Settings*: As a user, I want to configure WiFi7 settings to optimize my network.
+- *Monitor WiFi7 Performance*: As a user, I want to monitor WiFi7 performance for optimal connectivity.
+- *Receive WiFi7 Alerts*: As a user, I want to receive alerts for WiFi7 issues so I can take corrective action.
+
+### 3. **Design Documents**
+- **Functional**: Describes user flows, configuration screens, alerting mechanisms, and performance dashboards.
+- **Technical**: Details microservices, device communication protocols, security layers, and data storage.
+
+### 4. **Code Generation & Security Review**
+- AI generates modular Python code for WiFi7 device management, configuration APIs, and monitoring services.
+- Automated security review highlights vulnerabilities and recommends fixes.
+
+### 5. **Test Cases & QA**
+- Comprehensive test cases for connectivity, configuration, performance, and alerting.
+- Simulated QA feedback and bug reports.
+
+### 6. **Deployment & Artifacts**
+- Simulated deployment feedback.
+- Download all generated artifacts (requirements, user stories, design docs, code, test cases, QA reports).
+
+---
+
+## 📦 Project Structure
 ```plaintext
 AgenticSDLC/
 ├── artifacts/              # Generated Markdown artifact files
@@ -35,224 +68,107 @@ AgenticSDLC/
 │       ├── api/            # Fast API integration logic
 │       ├── graph/          # Graph builder and related logic
 │       ├── LLMS/           # LLM integrations (Gemini, Groq, OpenAI, etc.)
-│       ├── nodes/          # Individual nodes handling each SDLC phase (requirements, coding, etc.)
+│       ├── nodes/          # Individual nodes handling each SDLC phase
 │       ├── state/          # SDLC state definitions and data models
-│       ├── ui/             # UI components (e.g., Streamlit front-end, if any)
-│       ├── utils/          # Utility functions or classes (formatting, helpers, etc.)
-├── app.py                  # Main entry script (e.g., Streamlit or other CLI)
-├── LICENSE
-├── README.md
+│       ├── ui/             # UI components (Streamlit front-end)
+│       ├── utils/          # Utility functions
+├── app_streamlit.py        # Streamlit UI entry point
+├── app_api.py              # FastAPI entry point
 ├── requirements.txt        # Python dependencies
-├── workflow_graph.png      
-├── .env                    # Environment variables (API keys, etc.)
-└── .gitignore
+├── workflow_graph.png      # Visual workflow diagram
+└── README.md
 ```
 
-## Setup Instruction
-There are 2 entry point in the application: 1. FastAPI 2. Streamlit UI. Depending on the input passed through the command line, the application will be launched in the respective mode.
-- Clone the repo
-- Create a virtual environment
-- Install the requirements
-- Install Docker Desktop
-- Pull the Redis image using `docker pull redis`
-- Run the Redis container using `docker run -p 6379:6379 redis` (Docker is used to store the state of the graph in Redis)
-- Run the streamlit app using `streamlit run app_streamlit.py`
-- Run the FastAPI app using `python app_api.py`
+---
 
-Make sure to setup the environment variables in the .env file before running the application for the respective LLMs key.
+## ⚡ Getting Started
 
-If you don't want to use the redis locally through docker then flow below steps:
-- Inside `src/dev_pilot/cache/redis_cache.py` comment the docker redis client and uncomment the upstash redis client.
-- Set the url and token in the .env file.
+### 1. **Clone & Install**
+```bash
+git clone https://github.com/rajeshbakthavachalam/AgenticSDLC.git
+cd AgenticSDLC
+python -m venv venv
+source venv/bin/activate  # or .\venv\Scripts\activate on Windows
+pip install -r requirements.txt
+```
 
-## FastAPI Endpoints
+### 2. **Start Redis (Docker)**
+```bash
+docker run -p 6379:6379 redis
+```
 
-### 1. Start SDLC Process
+### 3. **Set Up Environment Variables**
+Create a `.env` file with your LLM API keys:
+```
+GEMINI_API_KEY=your_gemini_api_key
+GROQ_API_KEY=your_groq_api_key
+OPENAI_API_KEY=your_openai_api_key
+```
 
-Start the SDLC process by providing the project name. This endpoint initializes the SDLC process and returns a task ID.
+### 4. **Run the App**
+- **Streamlit UI:**
+  ```bash
+  streamlit run app_streamlit.py
+  ```
+- **FastAPI:**
+  ```bash
+  python app_api.py
+  ```
 
-**Request:**
+---
+
+## 🧭 API Example (WiFi7 Project)
+
+### Start SDLC Process
 ```http
 POST /api/v1/sdlc/start
 Content-Type: application/json
-
 {
-    "project_name": "Ecommerce Platform"
-}
-``` 
-
-**Response:**
-```json
-{
-    "status": "success",
-    "message": "SDLC process started successfully",
-    "task_id": "sdlc-session-f0b4d555",
-    "state": {
-        "project_name": "Ecommerce Platform"
-    },
-    "error": null
+    "project_name": "WiFi7 project"
 }
 ```
 
-### 2. Generate User Stories
-
-Generate user stories based on the provided project name and requirements. Return the generated user stories and the next node to proceed to.
-
-**Request:**
+### Generate User Stories
 ```http
 POST /api/v1/sdlc/user_stories
 Content-Type: application/json
-
 {
-    "project_name": "Ecommerce Platform",
+    "project_name": "WiFi7 project",
     "requirements": [
-        "Users can browser the products",
-        "Users should be able to add the product in the cart",
-        "Users should be able to do the payment",
-        "Users should be able to see their order history"
+        "The system should support WiFi7 connectivity",
+        "Users should be able to configure WiFi7 settings",
+        "The system should monitor WiFi7 performance",
+        "Users should receive alerts for WiFi7 issues"
     ],
-    "task_id": "sdlc-session-f0b4d555" // Unique task_id for a particular SDLC process
+    "task_id": "sdlc-session-xxxxxxx"
 }
 ```
 
-**Response:**
-```json
-{
-    "status": "success",
-    "message": "User Stories generated successfully",
-    "task_id": "sdlc-session-f0b4d555",
-    "state": {
-        "next_node": "review_user_stories",
-        "project_name": "Ecommerce Platform",
-        "requirements": [
-            "Users can browser the products",
-            "Users should be able to add the product in the cart",
-            "Users should be able to do the payment",
-            "Users should be able to see their order history"
-        ],
-        "user_stories": {
-            "user_stories": [
-                {
-                    "id": 1,
-                    "title": "Browse Products",
-                    "description": "As a guest user, I want to browse the products so that I can explore available items.",
-                    "priority": 2,
-                    "acceptance_criteria": "Verify that products are displayed with relevant details such as name, price, and image.\nVerify that users can filter products based on categories.\nVerify that users can sort products based on price, popularity, and rating."
-                },
-                {
-                    "id": 2,
-                    "title": "Add Product to Cart",
-                    "description": "As a registered user, I want to add products to the cart so that I can purchase them later.",
-                    "priority": 1,
-                    "acceptance_criteria": "Verify that users can add products to the cart from the product details page.\nVerify that the cart updates in real-time when a product is added.\nVerify that users can view the cart with the selected products and quantities."
-                },
-                {
-                    "id": 3,
-                    "title": "Process Payment",
-                    "description": "As a customer, I want to do the payment so that I can complete my purchase.",
-                    "priority": 1,
-                    "acceptance_criteria": "Verify that users can complete the payment process using valid credit/debit cards.\nVerify that the payment process is secure and compliant with industry standards.\nVerify that users receive an order confirmation upon successful payment."
-                },
-                {
-                    "id": 4,
-                    "title": "View Order History",
-                    "description": "As a registered user, I want to see my order history so that I can track my past purchases.",
-                    "priority": 3,
-                    "acceptance_criteria": "Verify that users can view their order history with details such as order date, products, and status.\nVerify that users can filter their order history by date or order status.\nVerify that users can view the details of each order."
-                }
-            ]
-        }
-    },
-    "error": null
-}
-```
-
-### 3. Update Workflow Progress
-
-Update the SDLC workflow progress (e.g., moving to the review phase) by providing the next node, status, and feedback. This endpoint updates the workflow state and returns the updated state along with the next node to proceed to. This contains the humman in the loop feedback.
-
-**Request:**
+### Progress Workflow
 ```http
 POST /api/v1/sdlc/progress_flow
 Content-Type: application/json
-
 {
-    "project_name": "Ecommerce Platform",
-    "task_id": "sdlc-session-f0b4d555",
-    "next_node": "review_user_stories", // next node to proceed to, each iteration will return the next node to proceed to
-    "status": "approved", // approved or feedback
-    "feedback": "None" // if status is feedback then provide the input
-}
-```
-**Response:**
-```json
-{
-  "status": "success",
-  "message": "Flow progressed successfully to next step",
-  "task_id": "sdlc-session-9884697b",
-  "state": {
-    "next_node": "review_design_documents",
-    "project_name": "Ecommerce Platform",
-    "requirements": [
-      "Users can browser the products",
-      "Users should be able to add the product in the cart",
-      "Users should be able to do the payment",
-      "Users should be able to see their order history"
-    ],
-    "user_stories": {
-      "user_stories": [
-        {
-          "id": 1,
-          "title": "Browse Products",
-          "description": "As a guest user, I want to browse the products so that I can explore available items.",
-          "priority": 2,
-          "acceptance_criteria": "Verify that products are displayed with relevant details such as name, price, and image.\nVerify that users can filter products based on categories.\nVerify that users can sort products based on price, popularity, and rating."
-        },
-        {
-          "id": 2,
-          "title": "Add Product to Cart",
-          "description": "As a registered user, I want to add products to the cart so that I can purchase them later.",
-          "priority": 1,
-          "acceptance_criteria": "Verify that users can add products to the cart from the product details page.\nVerify that the cart updates in real-time when a product is added.\nVerify that users can view the cart with the selected products and quantities."
-        },
-        {
-          "id": 3,
-          "title": "Process Payment",
-          "description": "As a customer, I want to do the payment so that I can complete my purchase.",
-          "priority": 1,
-          "acceptance_criteria": "Verify that users can complete the payment process using valid credit/debit cards.\nVerify that the payment process is secure and compliant with industry standards.\nVerify that users receive an order confirmation upon successful payment."
-        },
-        {
-          "id": 4,
-          "title": "View Order History",
-          "description": "As a registered user, I want to see my order history so that I can track my past purchases.",
-          "priority": 3,
-          "acceptance_criteria": "Verify that users can view their order history with details such as order date, products, and status.\nVerify that users can filter their order history by date or order status.\nVerify that users can view the details of each order."
-        }
-      ]
-    },
-    "user_stories_feedback": "None",
-    "user_stories_review_status": "approved",
-    "design_documents": {
-      "functional": "```markdown\n# Functional Design Document: Ecommerce Platform\n\n## 1. Introduction and Purpose\n\nThis document outlines the functional design of a new e-commerce platform. The purpose of this platform is to provide a user-friendly and efficient online shopping experience for customers, while also providing a robust and manageable backend for administrators to manage products, orders, and customer data. This document serves as a blueprint for the development team, ensuring a shared understanding of the platform's intended functionality.\n\n## 2. Project Scope\n\nThis project encompasses the development of a fully functional e-commerce platform, including:\n\n*   **Product Catalog:**  Displaying and managing product information.\n*   **Shopping Cart:**  Allowing users to add, modify, and review items before purchase.\n*   **Checkout Process:**  Handling shipping information, payment processing, and order confirmation.\n*   **User Account Management:**  Providing user registration, login, and profile management.\n*   **Order Management:**  Tracking order status and history.\n*   **Payment Gateway Integration:**  Securely processing online payments.\n\nThis project excludes:\n\n*```",
-      "technical": "```markdown\n# Technical Design Document: Ecommerce Platform\n\n## 1. System Architecture\n\nThe Ecommerce Platform will adopt a microservices architecture. This approach promotes modularity, scalability, and independent deployments.\n\n**Components:**\n\n*   **Frontend Service:** User interface, handles user interactions (browsing, cart management, checkout).\n*   **Product Catalog Service:** Manages product information (name, description, price, inventory).\n*   **Cart Service:** Manages user shopping carts.\n*   **Order Service:** Processes orders, manages order history.\n*   **Payment Service:** Handles payment processing.\n*   **User Service:** Manages user accounts and authentication.\n*   **Notification Service:** Sends email and other notifications (order confirmation, shipping updates).\n*   ```"
-    }
-  },
-  "error": null
+    "project_name": "WiFi7 project",
+    "task_id": "sdlc-session-xxxxxxx",
+    "next_node": "review_user_stories",
+    "status": "approved",
+    "feedback": "None"
 }
 ```
 
-### How to Use
-- **Start the Process:**  
-  Send the "start" request to initialize the SDLC process, which returns a task ID and state.
-  
-- **Generate User Stories:**  
-  Use the task ID from the start process, along with the project requirements, to generate user stories.
-  
-- **Update Workflow Progress:**  
-  With the task ID, update the workflow (for example, by approving or giving feedback on user stories). With each iteration pass the next node to proceed to and the status of the previous node. Status can be approved or feedback. Based on the status the next node will be determined. Once the workflow is completed it will return the end node, which indicates the completion of the SDLC process.
+---
 
-- **Added Postman collection for reference.**
+## 📊 Workflow Graph
+![Workflow Graph](workflow_graph.png)
 
-## Workflow Graph
-![](workflow_graph.png)
+---
+
+## 👤 Maintainer
+This project is maintained by [rajeshbakthavachalam](https://github.com/rajeshbakthavachalam/AgenticSDLC)
+
+---
+
+## 📝 License
+[GPL-3.0 License](LICENSE)
+
