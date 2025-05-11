@@ -1,11 +1,11 @@
-# DevPilot
+# AgenticSDLC
 
 ## _Pilot your entire software lifecycle from idea to release_
 
 ## Overview
-DevPilot is an end-to-end solution designed to automate your entire software development lifecycle. This project leverages a modular, graph-based architecture to transform user requirements into a fully deployed solution. It handles everything from collecting user requirements and generating user stories to creating design documents, code generation, security and test reviews, and deployment. In addition, Markdown artifacts for each phase are automatically generated and made available for download.
+AgenticSDLC is an end-to-end solution designed to automate your entire software development lifecycle. This project leverages a modular, graph-based architecture to transform user requirements into a fully deployed solution. It handles everything from collecting user requirements and generating user stories to creating design documents, code generation, security and test reviews, and deployment. In addition, Markdown artifacts for each phase are automatically generated and made available for download.
 
-DevPilot uses a state-driven graph (powered by [LangGraph](https://www.langchain.com/langgraph)) with conditional routing to manage the process. The project also integrates with Redis (optionally hosted externally) for caching and state persistence, and provides a visual workflow diagram of the entire process.
+AgenticSDLC uses a state-driven graph (powered by [LangGraph](https://www.langchain.com/langgraph)) with conditional routing to manage the process. The project also integrates with Redis (optionally hosted externally) for caching and state persistence, and provides a visual workflow diagram of the entire process.
 
 ## Features
 - **End-to-End SDLC Automation:** Automates every stage of the software development lifecycle—from project initialization to deployment.
@@ -23,7 +23,7 @@ DevPilot uses a state-driven graph (powered by [LangGraph](https://www.langchain
 
 ## Project Structure
 ```plaintext
-DevPilot/
+AgenticSDLC/
 ├── artifacts/              # Generated Markdown artifact files
 ├── src/
 │   └── dev_pilot/
@@ -254,4 +254,4 @@ Content-Type: application/json
 ![](workflow_graph.png)
 
 ## Workflow Video
-[Watch the video](https://youtu.be/SfYjKJzl1I8)
+[Watch the video](https://youtu.be/SfYjKJzl1I8)"# AgenticSDLC" 
